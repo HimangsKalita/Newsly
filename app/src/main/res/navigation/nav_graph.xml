@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/home2">
+
+    <fragment
+        android:id="@+id/home2"
+        android:name="com.himangskalita.newsly.presentation.ui.fragments.HeadlinesFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_headlines" >
+        <action
+            android:id="@+id/action_home2_to_articleFragment2"
+            app:destination="@id/articleFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/bookmarksFragment2"
+        android:name="com.himangskalita.newsly.presentation.ui.fragments.BookmarksFragment"
+        android:label="fragment_bookmarks"
+        tools:layout="@layout/fragment_bookmarks" >
+        <action
+            android:id="@+id/action_bookmarksFragment2_to_articleFragment2"
+            app:destination="@id/articleFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment2"
+        android:name="com.himangskalita.newsly.presentation.ui.fragments.SearchFragment"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment2_to_articleFragment2"
+            app:destination="@id/articleFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/articleFragment2"
+        android:name="com.himangskalita.newsly.presentation.ui.fragments.ArticleFragment"
+        android:label="fragment_article"
+        tools:layout="@layout/fragment_article" >
+        <action
+            android:id="@+id/action_articleFragment2_to_searchFragment2"
+            app:destination="@id/searchFragment2" />
+        <action
+            android:id="@+id/action_articleFragment2_to_home2"
+            app:destination="@id/home2" />
+        <action
+            android:id="@+id/action_articleFragment2_to_bookmarksFragment2"
+            app:destination="@id/bookmarksFragment2" />
+    </fragment>
+</navigation>

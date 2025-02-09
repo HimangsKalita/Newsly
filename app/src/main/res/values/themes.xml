@@ -1,0 +1,12 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Newsly" parent="Theme.Material3.DayNight.NoActionBar">
+
+    </style>
+
+    <style name="BottomNavigationTheme">
+        <item name="colorSecondaryContainer">@color/warningYellow</item>
+    </style>
+
+    <style name="Theme.Newsly" parent="Base.Theme.Newsly" />
+</resources>
