@@ -2,7 +2,12 @@ package com.himangskalita.newsly.data.repository
 
 import com.himangskalita.newsly.data.api.NewsApi
 import com.himangskalita.newsly.data.db.ArticleDao
+import com.himangskalita.newsly.data.db.BookmarkArticleDao
 import com.himangskalita.newsly.data.models.Article
+import com.himangskalita.newsly.data.models.BookmarkArticle
+import com.himangskalita.newsly.utils.DatabaseEmptyException
+import com.himangskalita.newsly.utils.Logger
+import com.himangskalita.newsly.utils.NoSearchArticlesFound
 import javax.inject.Inject
 
 class ApiNewsRepositoryIml @Inject constructor(
@@ -24,20 +29,28 @@ class ApiNewsRepositoryIml @Inject constructor(
 
                     val cachedArticles = articleDao.getArticles()
 
-                    val newArticles = articleList.filterNot { article ->
-
-                        cachedArticles.any { it.url == article.url }
-                    }
-
                     if (cachedArticles.isNotEmpty()) {
 
+                        Logger.d("Database before clearing: ${articleDao.getArticles().size}")
                         articleDao.clearArticles()
-                    }
+                        Logger.d("Database after clearing: ${articleDao.getArticles().size}")
 
-                    articleDao.insertArticleList(newArticles)
+//                        val newArticles = articleList.filterNot { article ->
+//
+//                            cachedArticles.any { it.url == article.url }
+//                        }
+
+                        articleDao.insertArticleList(articleList)
+                        Logger.d("Database: New Database Cache: ${articleDao.getArticles().size}")
+
+                    }else {
+
+                        articleDao.insertArticleList(articleList)
+                        Logger.d("Database: Initial Database Cache: ${articleDao.getArticles().size}")
+                    }
                 }
 
-                Result.success(response.body()?.articles.orEmpty())
+                Result.success(articleList)
 
             }else {
 
@@ -47,6 +60,34 @@ class ApiNewsRepositoryIml @Inject constructor(
         }catch (e: Exception) {
 
             Result.failure(e)
+        }
+    }
+
+    override suspend fun searchNews(query: String): Result<List<Article>> {
+
+        return try {
+
+            val response = newsApi.searchNewsEverything(query = query)
+
+            if (response.isSuccessful) {
+
+                val articleList = response.body()?.articles.orEmpty()
+
+                if (articleList.isNotEmpty()) {
+
+                    Result.success(articleList)
+                }else {
+
+                    Result.failure(NoSearchArticlesFound("No Articles found"))
+                }
+            }else{
+
+                Result.failure(Throwable("${response.code()}: ${mapError(response.code())}"))
+            }
+
+        }catch (e: Exception) {
+
+            Result.failure(Throwable("Error searching news: ${e.message}, ${e.cause}"))
         }
     }
 
@@ -75,7 +116,8 @@ class ApiNewsRepositoryIml @Inject constructor(
 
 class DatabaseNewsRepositoryImpl @Inject constructor(
 
-    private val articleDao: ArticleDao
+    private val articleDao: ArticleDao,
+    private val bookmarkArticleDao: BookmarkArticleDao
 ): DatabaseNewsRepository {
 
     override suspend fun saveArticleList(articleList: List<Article>) {
@@ -94,12 +136,47 @@ class DatabaseNewsRepositoryImpl @Inject constructor(
                 Result.success(articleList)
             }else {
 
-                Result.failure(Throwable("Error database is empty"))
+                Result.failure(DatabaseEmptyException("Error database is empty"))
             }
 
         }catch (e: Exception) {
 
             Result.failure(Throwable("Error fetching articles from database: ${e.message}, ${e.cause}"))
         }
+    }
+
+    override suspend fun saveBookmark(bookmarkArticle: BookmarkArticle) {
+
+        bookmarkArticleDao.insertBookmarkArticle(bookmarkArticle)
+    }
+
+    override suspend fun getBookmarkArticles(): Result<List<BookmarkArticle>> {
+
+        return try {
+
+            val bookmarkArticleList = bookmarkArticleDao.getBookmarkArticles()
+
+            if (bookmarkArticleList.isNotEmpty()) {
+
+                Result.success(bookmarkArticleList)
+            }else {
+
+                Result.failure(DatabaseEmptyException("Empty Bookmark exception"))
+            }
+
+        }catch (e: Exception) {
+
+            Result.failure(Throwable("Error fetching bookmark articles: ${e.message}, ${e.cause}"))
+        }
+    }
+
+    override suspend fun deleteBookmarkArticle(url: String) {
+
+        bookmarkArticleDao.deleteBookmarkArticle(url)
+    }
+
+    override suspend fun clearBookmarkArticles() {
+
+        bookmarkArticleDao.clearBookmarkArticles()
     }
 }

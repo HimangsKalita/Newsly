@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/ItemBookmarkView"
+    android:layout_margin="15dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/inIvImage"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.33"
+        app:shapeAppearanceOverlay="@style/circularImageView" />
+
+    <LinearLayout
+        android:id="@+id/inLlText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/inIvImage"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/inTvSource"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Source Name"
+            android:textColor="@color/greyFont"
+            android:textSize="13sp"
+            app:layout_constraintStart_toEndOf="@id/inIvImage"
+            app:layout_constraintTop_toTopOf="@id/inIvImage" />
+
+        <TextView
+            android:id="@+id/inTvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:text="Title"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/inIvImage"
+            app:layout_constraintTop_toBottomOf="@id/inTvSource" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/inLlBottomCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:orientation="horizontal"
+        android:gravity="bottom|left"
+        app:layout_constraintBottom_toBottomOf="@id/inIvImage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/inIvImage"
+        app:layout_constraintTop_toBottomOf="@id/inLlText">
+
+        <TextView
+            android:id="@+id/inTvAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Author"
+            android:textColor="@color/greyFont"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/inTvBulletPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_toEndOf="@id/inTvAuthor"
+            android:gravity="center_vertical|center"
+            android:includeFontPadding="false"
+            android:text="•"
+            android:textColor="@color/greyFont"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/inTvPublishedDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:textColor="@color/greyFont"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,7 +7,7 @@
     tools:context=".presentation.ui.fragments.HeadlinesFragment">
 
     <TextView
-        android:id="@+id/fhTvInfo"
+        android:id="@+id/fgHlTvInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="7dp"
@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/fhPbLoading"
+        android:id="@+id/fgHlPbLoading"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/fhShimmerLayout"
+        android:id="@+id/fgHlShimmerLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="5dp"
@@ -45,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fhTvInfo"
+        app:layout_constraintTop_toBottomOf="@id/fgHlTvInfo"
         app:layout_constraintVertical_bias="0.5">
 
         <LinearLayout
@@ -73,15 +73,12 @@
 
             <include layout="@layout/item_news_shimmer_placeholder" />
 
-            <include layout="@layout/item_news_shimmer_placeholder" />
-
-
         </LinearLayout>
 
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fhRvNewsList"
+        android:id="@+id/fgHlRvNewsList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="5dp"
@@ -89,7 +86,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fhTvInfo"
+        app:layout_constraintTop_toBottomOf="@id/fgHlTvInfo"
         app:layout_constraintVertical_bias="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

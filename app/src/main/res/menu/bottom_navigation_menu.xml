@@ -3,35 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/bnmHome"
+        android:id="@+id/fgHeadlines"
         android:title="Home"
         android:contentDescription="Home menu of news section"
-        android:icon="@drawable/baseline_home_filled_24"
-        android:iconTint="@color/white"
-        app:showAsAction="always" />
+        android:icon="@drawable/baseline_home_filled_24"/>
 
     <item
-        android:id="@+id/bnmSearch"
+        android:id="@+id/fgmSearch"
         android:title="Search"
         android:contentDescription="Search menu to search for news"
-        android:icon="@drawable/baseline_search_24"
-        android:iconTint="@color/white"
-        app:showAsAction="always" />
+        android:icon="@drawable/baseline_search_24"/>
 
     <item
-        android:id="@+id/bnmBookmarks"
+        android:id="@+id/fgBookmarks"
         android:title="Bookmarks"
         android:contentDescription="Bookmarks menu for all the bookmark news list"
-        android:icon="@drawable/baseline_bookmark_24"
-        android:iconTint="@color/white"
-        app:showAsAction="always" />
+        android:icon="@drawable/baseline_bookmark_24"/>
 
     <item
-        android:id="@+id/bnmSettings"
+        android:id="@+id/fgSettings"
         android:title="Settings"
         android:contentDescription="Settings menu of the app to change preferences"
-        android:icon="@drawable/baseline_settings_24"
-        android:iconTint="@color/white"
-        app:showAsAction="always" />
-
+        android:icon="@drawable/baseline_settings_24"/>
 </menu>

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.himangskalita.newsly.data.db.ArticleDao
 import com.himangskalita.newsly.data.db.ArticleDatabase
+import com.himangskalita.newsly.data.db.BookmarkArticleDao
 import com.himangskalita.newsly.data.repository.DatabaseNewsRepository
 import com.himangskalita.newsly.data.repository.DatabaseNewsRepositoryImpl
 import dagger.Module
@@ -19,9 +20,23 @@ object RoomModule {
 
     @Provides
     @Singleton
-    fun getDatabaseNewsRepository(articleDao: ArticleDao): DatabaseNewsRepository {
+    fun getDatabaseNewsRepository(articleDao: ArticleDao, bookmarkArticleDao: BookmarkArticleDao): DatabaseNewsRepository {
 
-        return DatabaseNewsRepositoryImpl(articleDao)
+        return DatabaseNewsRepositoryImpl(articleDao, bookmarkArticleDao)
+    }
+
+    @Provides
+    @Singleton
+    fun getArticleDao(articleDatabase: ArticleDatabase): ArticleDao {
+
+        return articleDatabase.getArticleDao()
+    }
+
+    @Provides
+    @Singleton
+    fun getBookmarkArticleDao(articleDatabase: ArticleDatabase): BookmarkArticleDao {
+
+        return articleDatabase.getBookmarkArticleDao()
     }
 
     @Provides
@@ -33,12 +48,5 @@ object RoomModule {
             ArticleDatabase::class.java,
             "articleDatabase"
         ).build()
-    }
-
-    @Provides
-    @Singleton
-    fun getArticleDao(articleDatabase: ArticleDatabase): ArticleDao {
-
-        return articleDatabase.getArticleDao()
     }
 }

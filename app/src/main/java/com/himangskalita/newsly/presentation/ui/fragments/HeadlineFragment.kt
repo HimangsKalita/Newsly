@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.himangskalita.newsly.R
 import com.himangskalita.newsly.data.models.Article
@@ -17,6 +17,7 @@ import com.himangskalita.newsly.databinding.FragmentHeadlinesBinding
 import com.himangskalita.newsly.presentation.adapter.NewsAdapter
 import com.himangskalita.newsly.presentation.viewmodel.HeadlinesViewModel
 import com.himangskalita.newsly.utils.Logger
+import com.himangskalita.newsly.utils.NetworkUIState
 import com.himangskalita.newsly.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +32,11 @@ class HeadlinesFragment : Fragment() {
     private var _binding: FragmentHeadlinesBinding? = null
     private val binding get() = _binding!!
     private val headlinesViewModel: HeadlinesViewModel by viewModels()
-    private val newsAdapter by lazy { NewsAdapter() }
-    private var hasFetchedNews = false
-    private var initialConnection = true
+    private val newsAdapter by lazy { NewsAdapter{articleItem ->
+
+        val action = HeadlinesFragmentDirections.actionFgHeadlinesToFgArticle(articleItem)
+        findNavController().navigate(action)
+    } }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +54,7 @@ class HeadlinesFragment : Fragment() {
 
     private fun setupRecycleView() {
 
-        binding.fhRvNewsList.apply {
+        binding.fgHlRvNewsList.apply {
 
             layoutManager = LinearLayoutManager(requireContext())
             adapter = newsAdapter
@@ -62,33 +65,46 @@ class HeadlinesFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
 
-            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-                headlinesViewModel.connectivityStatus.collect { networkState ->
+                headlinesViewModel.networkUIState.collect { networkUIState ->
 
-                    Logger.d("Network status: $networkState")
+                    when (networkUIState) {
 
-                    if (networkState) {
-
-                        Logger.d("Internet connected")
-
-                        if (!hasFetchedNews) {
-
-                            handleConnectedState()
+                        is NetworkUIState.Unknown -> {
+                            Logger.d("Network State: Unknown")
                         }
 
-                        if (!initialConnection) {
+                        is NetworkUIState.Connected -> {
 
-                            showInternetConnectionStatus()
-                        }else {
+//                            showInternetConnectionStatus()
 
-                            initialConnection = false
+                            if (!headlinesViewModel.firstConnection.value!!) {
+
+                                Logger.d("FirstConnection - Connected(Showing): ${headlinesViewModel.firstConnection.value}")
+                                showInternetConnectionStatus()
+                            } else {
+
+                                Logger.d("FirstConnection - Connected(Not showing - Changing values): ${headlinesViewModel.firstConnection.value}")
+                                headlinesViewModel.changeFirstConnectionValue()
+                            }
+
+                            if (!headlinesViewModel.hasFetchedNews) {
+
+                                Logger.d("Hasfetched news: ${headlinesViewModel.hasFetchedNews}")
+                                fetchApiNewsHeadlines()
+                                headlinesViewModel.changeHasFetchedNews()
+                                Logger.d("Hasfetched news: ${headlinesViewModel.hasFetchedNews}")
+                            }else {
+
+                                Logger.d("Hasfetched news: ${headlinesViewModel.hasFetchedNews}")
+                            }
                         }
 
-                    } else {
+                        is NetworkUIState.Disconnected -> {
 
-                        Logger.d("Internet disconnected")
-                        handleDisconnectedState()
+                            handleDisconnectedState()
+                        }
                     }
                 }
 
@@ -96,15 +112,9 @@ class HeadlinesFragment : Fragment() {
         }
     }
 
-    private fun handleConnectedState() {
-
-        hasFetchedNews = true
-        fetchApiNewsHeadlines()
-    }
-
     private fun showInternetConnectionStatus() {
 
-        binding.fhTvInfo.apply {
+        binding.fgHlTvInfo.apply {
 
             setBackgroundColor(requireContext().getColor(R.color.green))
             text = "internet connected"
@@ -123,22 +133,30 @@ class HeadlinesFragment : Fragment() {
 
     private fun handleDisconnectedState() {
 
-        if (!initialConnection) {
+        showInternetDisconnectionStatus()
+        headlinesViewModel.changeFirstConnectionValue()
 
-            showInternetDisconnectionStatus()
-        }else {
+        if (!headlinesViewModel.hasFetchedNews) {
 
-            initialConnection = false
-        }
-        if (binding.fhRvNewsList.size == 0) {
-
+//            if (!headlinesViewModel.firstConnection.value!!) {
+//
+//                Logger.d("hasFetchedNews - Disconnected(showing): ${headlinesViewModel.firstConnection.value}")
+//                showInternetDisconnectionStatus()
+//
+//            } else {
+//
+//                Logger.d("FirstConnection - Disconnected(Not showing - Changing values): ${headlinesViewModel.firstConnection.value}")
+//                headlinesViewModel.changeFirstConnectionValue()
+//                Logger.d("FirstConnection - Disconnected(Not showing - Changed values): ${headlinesViewModel.firstConnection.value}")
+//            }
             fetchDatabaseHeadlines()
+
         }
     }
 
     private fun showInternetDisconnectionStatus() {
 
-        binding.fhTvInfo.apply {
+        binding.fgHlTvInfo.apply {
 
             setBackgroundColor(requireContext().getColor(R.color.errorRed))
             text = "no internet connection"
@@ -173,9 +191,10 @@ class HeadlinesFragment : Fragment() {
 
                 binding.apply {
 
-                    fhPbLoading.visibility = View.VISIBLE
-                    fhShimmerLayout.visibility = View.VISIBLE
-                    fhShimmerLayout.startShimmer()
+                    fgHlPbLoading.visibility = View.VISIBLE
+                    fgHlRvNewsList.visibility = View.GONE
+                    fgHlShimmerLayout.visibility = View.VISIBLE
+                    fgHlShimmerLayout.startShimmer()
                 }
             }
 
@@ -183,9 +202,10 @@ class HeadlinesFragment : Fragment() {
 
                 binding.apply {
 
-                    fhPbLoading.visibility = View.GONE
-                    fhShimmerLayout.stopShimmer()
-                    fhShimmerLayout.visibility = View.GONE
+                    fgHlPbLoading.visibility = View.GONE
+                    fgHlShimmerLayout.stopShimmer()
+                    fgHlShimmerLayout.visibility = View.GONE
+                    fgHlRvNewsList.visibility = View.VISIBLE
                 }
                 newsAdapter.submitList(result.data)
             }
@@ -194,7 +214,8 @@ class HeadlinesFragment : Fragment() {
 
                 binding.apply {
 
-                    fhPbLoading.visibility = View.GONE
+                    fgHlPbLoading.visibility = View.GONE
+                    fgHlRvNewsList.visibility = View.VISIBLE
                 }
                 Logger.d("Error fetching news: " + result.message.toString())
             }
@@ -213,6 +234,11 @@ class HeadlinesFragment : Fragment() {
 
         Logger.d("Database News Fetch Request")
         headlinesViewModel.fetchDatabaseHeadlines()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        headlinesViewModel.changeFirstConnectionValueTrue()
     }
 
     override fun onDestroy() {

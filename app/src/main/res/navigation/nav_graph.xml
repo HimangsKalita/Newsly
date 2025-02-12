@@ -3,48 +3,87 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/home2">
+    app:startDestination="@id/fgHeadlines">
 
     <fragment
-        android:id="@+id/home2"
+        android:id="@+id/fgHeadlines"
         android:name="com.himangskalita.newsly.presentation.ui.fragments.HeadlinesFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_headlines" >
         <action
-            android:id="@+id/action_home2_to_articleFragment2"
-            app:destination="@id/articleFragment2" />
-    </fragment>
-    <fragment
-        android:id="@+id/bookmarksFragment2"
-        android:name="com.himangskalita.newsly.presentation.ui.fragments.BookmarksFragment"
-        android:label="fragment_bookmarks"
-        tools:layout="@layout/fragment_bookmarks" >
+            android:id="@+id/action_fgHeadlines_to_fgArticle"
+            app:destination="@id/fgArticle" />
         <action
-            android:id="@+id/action_bookmarksFragment2_to_articleFragment2"
-            app:destination="@id/articleFragment2" />
+            android:id="@+id/action_fgHeadlines_to_fgmSearch"
+            app:destination="@id/fgmSearch" />
+        <action
+            android:id="@+id/action_fgHeadlines_to_fgBookmarks"
+            app:destination="@id/fgBookmarks" />
+        <action
+            android:id="@+id/action_fgHeadlines_to_fgSettings"
+            app:destination="@id/fgSettings" />
     </fragment>
     <fragment
-        android:id="@+id/searchFragment2"
-        android:name="com.himangskalita.newsly.presentation.ui.fragments.SearchFragment"
+        android:id="@+id/fgmSearch"
+        android:name ="com.himangskalita.newsly.presentation.ui.fragments.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
-            android:id="@+id/action_searchFragment2_to_articleFragment2"
-            app:destination="@id/articleFragment2" />
+            android:id="@+id/action_fgmSearch_to_fgArticle"
+            app:destination="@id/fgArticle" />
+        <action
+            android:id="@+id/action_fgmSearch_to_fgHeadlines"
+            app:destination="@id/fgHeadlines" />
+        <action
+            android:id="@+id/action_fgmSearch_to_fgBookmarks"
+            app:destination="@id/fgBookmarks" />
+        <action
+            android:id="@+id/action_fgmSearch_to_fgSettings"
+            app:destination="@id/fgSettings" />
     </fragment>
     <fragment
-        android:id="@+id/articleFragment2"
-        android:name="com.himangskalita.newsly.presentation.ui.fragments.ArticleFragment"
+        android:id="@+id/fgBookmarks"
+        android:name="com.himangskalita.newsly.presentation.ui.fragments.BookmarkFragment"
+        android:label="fragment_bookmarks"
+        tools:layout="@layout/fragment_bookmarks" >
+        <action
+            android:id="@+id/action_fgBookmarks_to_fgArticle"
+            app:destination="@id/fgArticle" />
+        <argument
+            android:name="articleItem"
+            app:argType="com.himangskalita.newsly.data.models.Article" />
+        <action
+            android:id="@+id/action_fgBookmarks_to_fgHeadlines"
+            app:destination="@id/fgHeadlines" />
+        <action
+            android:id="@+id/action_fgBookmarks_to_fgHeadlines2"
+            app:destination="@id/fgHeadlines" />
+        <action
+            android:id="@+id/action_fgBookmarks_to_fgSettings"
+            app:destination="@id/fgSettings" />
+    </fragment>
+    <fragment
+        android:id="@+id/fgSettings"
+        android:name="com.himangskalita.newsly.presentation.ui.fragments.SettingsFragment"
         android:label="fragment_article"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_fgSettings_to_fgHeadlines"
+            app:destination="@id/fgHeadlines" />
+        <action
+            android:id="@+id/action_fgSettings_to_fgmSearch"
+            app:destination="@id/fgmSearch" />
+        <action
+            android:id="@+id/action_fgSettings_to_fgBookmarks"
+            app:destination="@id/fgBookmarks" />
+    </fragment>
+    <fragment
+        android:id="@+id/fgArticle"
+        android:name="com.himangskalita.newsly.presentation.ui.fragments.ArticleFragment"
+        android:label="fragment_settings"
         tools:layout="@layout/fragment_article" >
-        <action
-            android:id="@+id/action_articleFragment2_to_searchFragment2"
-            app:destination="@id/searchFragment2" />
-        <action
-            android:id="@+id/action_articleFragment2_to_home2"
-            app:destination="@id/home2" />
-        <action
-            android:id="@+id/action_articleFragment2_to_bookmarksFragment2"
-            app:destination="@id/bookmarksFragment2" />
+        <argument
+            android:name="articleItem"
+            app:argType="com.himangskalita.newsly.data.models.Article" />
     </fragment>
 </navigation>

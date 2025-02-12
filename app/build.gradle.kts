@@ -7,6 +7,7 @@ plugins {
     kotlin("kapt") version "2.1.0"
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -116,6 +117,9 @@ dependencies {
 
     // Facebook shimmer loading effect
     implementation("com.facebook.shimmer:shimmer:0.5.0")
+
+    //Leakcanary
+//    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
 }
 

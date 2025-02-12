@@ -2,6 +2,7 @@ package com.himangskalita.newsly.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -14,7 +15,7 @@ import com.himangskalita.newsly.R
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.databinding.ItemNewsBinding
 
-class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DiffUtilComparision()) {
+class NewsAdapter(private val onArticleClick: (Article) -> Unit) : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DiffUtilComparison()) {
 
     class NewsViewHolder(val binding: ItemNewsBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -29,6 +30,11 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DiffUtilCom
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
 
         val articleItem = getItem(position)
+
+        holder.binding.root.setOnClickListener {
+
+            onArticleClick(articleItem)
+        }
 
         if (articleItem.urlToImage != null) {
 
@@ -52,7 +58,7 @@ class NewsAdapter : ListAdapter<Article, NewsAdapter.NewsViewHolder>(DiffUtilCom
 
     }
 
-    private class DiffUtilComparision : DiffUtil.ItemCallback<Article>() {
+    private class DiffUtilComparison : DiffUtil.ItemCallback<Article>() {
 
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
             return oldItem.url == newItem.url
