@@ -121,6 +121,8 @@ dependencies {
     //Leakcanary
 //    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
+    //swipt to refresh
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
 }
 
 

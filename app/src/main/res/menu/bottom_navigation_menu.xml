@@ -9,7 +9,7 @@
         android:icon="@drawable/baseline_home_filled_24"/>
 
     <item
-        android:id="@+id/fgmSearch"
+        android:id="@+id/fgSearch"
         android:title="Search"
         android:contentDescription="Search menu to search for news"
         android:icon="@drawable/baseline_search_24"/>

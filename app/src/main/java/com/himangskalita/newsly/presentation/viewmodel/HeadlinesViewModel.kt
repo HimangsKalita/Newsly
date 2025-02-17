@@ -29,13 +29,19 @@ class HeadlinesViewModel @Inject constructor(
     val result: StateFlow<Resource<List<Article>>>
         get() = _result
     private var headlinePage = 1
+    fun getHeadlinePageCount() = headlinePage
+
     private var _hasFetchedNews = false
     val hasFetchedNews: Boolean
         get() = _hasFetchedNews
-    fun changeHasFetchedNews() {
+    fun changeHasFetchedNewsTrue() {
 
         _hasFetchedNews = true
     }
+//    fun changeHasFetchedNewsFalse() {
+//
+//        _hasFetchedNews = false
+//    }
 
     private val _firstConnection = MutableLiveData(true)
     val firstConnection: LiveData<Boolean>
@@ -47,6 +53,18 @@ class HeadlinesViewModel @Inject constructor(
     fun changeFirstConnectionValueTrue() {
 
         _firstConnection.value = true
+    }
+
+    private val _swipeRefreshLoading = MutableLiveData<Boolean>(false)
+    val swipeRefreshLoading: LiveData<Boolean>
+        get() = _swipeRefreshLoading
+    fun changeSwipeRefreshLoadingFalse() {
+
+        _swipeRefreshLoading.value = false
+    }
+    fun changeSwipeRefreshLoadingTrue() {
+
+        _swipeRefreshLoading.value = true
     }
 
     private val _networkUIState = MutableStateFlow<NetworkUIState>(NetworkUIState.Unknown)

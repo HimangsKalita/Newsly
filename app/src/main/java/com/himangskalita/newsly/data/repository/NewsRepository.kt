@@ -16,6 +16,7 @@ interface DatabaseNewsRepository {
 
     suspend fun saveBookmark(bookmarkArticle: BookmarkArticle)
     suspend fun getBookmarkArticles(): Result<List<BookmarkArticle>>
+    suspend fun isBookmarked(url: String): Boolean
     suspend fun deleteBookmarkArticle(url: String)
     suspend fun clearBookmarkArticles()
 }

@@ -7,7 +7,7 @@
     tools:context=".presentation.ui.fragments.SearchFragment">
 
     <TextView
-        android:id="@+id/fsTvInfo"
+        android:id="@+id/fgSrTvInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="7dp"
@@ -22,34 +22,140 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/fsEtSearchNews"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/fgSrTvEmpty"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/search_bar_border"
-        android:drawableEnd="@drawable/baseline_search_24"
-        android:hint="Search News..."
+        android:drawableBottom="@drawable/baseline_search_24"
         android:padding="10dp"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fsTvInfo" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/fgHlRvNewsList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:padding="5dp"
-        android:layout_marginTop="10dp"
+        android:text="No news found, try searing using different keyword(s)"
+        android:textAlignment="center"
+        android:textSize="22sp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fsEtSearchNews"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/fgSrTvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableBottom="@drawable/baseline_warning_amber_24"
+        android:padding="10dp"
+        android:text="Error fetching news, please try again later"
+        android:textAlignment="center"
+        android:textSize="22sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5" />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/fgSrPbSearchingNews"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="50dp"
+        android:contentDescription="Searching news"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/fgSrSvSearchNews"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/search_bar_border"
+        app:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryHint="Search News..." />
+
+    <!--    <EditText-->
+    <!--        android:id="@+id/fgSrEtSearchNews"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginTop="14dp"-->
+    <!--        android:layout_marginStart="8dp"-->
+    <!--        android:layout_marginEnd="8dp"-->
+    <!--        android:visibility="gone"-->
+    <!--        android:background="@drawable/search_bar_border"-->
+    <!--        android:drawableStart="@drawable/baseline_search_24"-->
+    <!--        android:hint="Search News..."-->
+    <!--        android:padding="12dp"-->
+    <!--        android:textSize="16sp"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintHorizontal_bias="0.5"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/fsTvInfo" />-->
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/fgHlShimmerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fgSrSvSearchNews"
+        app:layout_constraintVertical_bias="0.5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+            <include layout="@layout/item_news_shimmer_placeholder" />
+
+        </LinearLayout>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fgSrRvNewsList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:padding="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fgSrSvSearchNews"
         app:layout_constraintVertical_bias="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,21 +1,25 @@
 package com.himangskalita.newsly.presentation.ui.fragments
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.CookieManager
+import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.himangskalita.newsly.R
 import com.himangskalita.newsly.databinding.FragmentArticleBinding
-//import com.himangskalita.newsly.presentation.viewmodel.ArticleViewModel
-import com.himangskalita.newsly.presentation.viewmodel.BookmarkViewModel
-import com.himangskalita.newsly.utils.Logger
+import com.himangskalita.newsly.presentation.viewmodel.ArticleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,23 +28,10 @@ class ArticleFragment : Fragment() {
     private var _binding: FragmentArticleBinding? = null
     private val binding
         get() = _binding!!
-    private val bookmarkViewModel: BookmarkViewModel by viewModels()
-//    private val articleViewModel: ArticleViewModel by viewModels()
+    private val articleViewModel: ArticleViewModel by viewModels()
+
     private val args by navArgs<ArticleFragmentArgs>()
     private var onBackPressedCallback: OnBackPressedCallback? = null
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        binding.fgAtWvArticle.saveState(outState)
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-
-        savedInstanceState?.let {
-            binding.fgAtWvArticle.restoreState(savedInstanceState)
-        }
-    }
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreateView(
@@ -50,19 +41,22 @@ class ArticleFragment : Fragment() {
 
         _binding = FragmentArticleBinding.inflate(inflater, container, false)
 
-        val articleItem = args.articleItem
-
         binding.fgAtWvArticle.apply {
 
             settings.apply {
-//                userAgentString =
-//                    "Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Mobile/15E148 Safari/604.1"
+                userAgentString =
+                    "Mozilla/5.0 (Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
                 javaScriptEnabled = true
+                domStorageEnabled = true
+                cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+                databaseEnabled = true
                 setSupportZoom(true)
                 builtInZoomControls = true
                 displayZoomControls = false
                 safeBrowsingEnabled = true
             }
+
+            CookieManager.getInstance().setAcceptCookie(true)
         }
 
 
@@ -74,8 +68,6 @@ class ArticleFragment : Fragment() {
 
                 binding.apply {
 
-                    fgAtTvError.visibility = View.GONE
-                    fgAtBtnReload.visibility = View.GONE
                     fgAtPbLoading.visibility = View.VISIBLE
                     fgAtWvArticle.visibility = View.VISIBLE
                 }
@@ -92,7 +84,8 @@ class ArticleFragment : Fragment() {
                             } else {
                                 isEnabled = false
                                 remove()
-                                requireActivity().onBackPressedDispatcher.onBackPressed()
+                                findNavController().navigateUp()
+//                                requireActivity().onBackPressedDispatcher.onBackPressed()
                             }
                         }
                     })
@@ -109,24 +102,106 @@ class ArticleFragment : Fragment() {
             }
         }
 
-        if (savedInstanceState == null) {
 
-            binding.fgAtWvArticle.loadUrl(articleItem.url)
-        }
-
-        binding.fgAtFabBookmarkArticle.setOnClickListener {
-
-            bookmarkViewModel.addBookmarkArticle(articleItem)
-            Logger.d("Bookmark Added")
-        }
 
         return binding.root
     }
 
-    override fun onStop() {
-        super.onStop()
-//        articleViewModel.changeStateChanged()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val articleUrl = args.articleItem.url
+
+        articleViewModel.checkArticleBookmarked(articleUrl)
+
+        articleViewModel.isBookMarked.observe(viewLifecycleOwner) { isBookmarked ->
+
+            updateBookmarkIcon(isBookmarked!!)
+
+        }
+
+        binding.fgAtFabBookmarkArticle.setOnClickListener {
+
+            articleViewModel.toggleBookmark(args.articleItem)
+
+//            if (articleViewModel.isBookMarked.value!!) {
+//
+//                articleViewModel.deleteBookmarkArticle(articleItem.url)
+//                val color = ContextCompat.getColor(requireContext(), R.color.lightGrey)
+//                binding.fgAtFabBookmarkArticle.backgroundTintList = ColorStateList.valueOf(color)
+//                Snackbar.make(binding.root, "Bookmark Removed", Snackbar.LENGTH_SHORT)
+//                    .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+//                    .setAction("OK") {}
+//                    .show()
+//                Logger.d("Bookmark Added")
+//
+//            }else {
+//
+//                articleViewModel.addBookmarkArticle(articleItem)
+//                val color = ContextCompat.getColor(requireContext(), R.color.blue)
+//                binding.fgAtFabBookmarkArticle.backgroundTintList = ColorStateList.valueOf(color)
+//                Snackbar.make(binding.root, "Bookmark Added", Snackbar.LENGTH_SHORT)
+//                    .setActionTextColor(ContextCompat.getColor(requireContext(), R.color.lightBlue))
+//                    .setAction("UNDO") {
+//
+//                        articleViewModel.deleteBookmarkArticle(articleItem.url)
+//                        val color = ContextCompat.getColor(requireContext(), R.color.lightGrey)
+//                        binding.fgAtFabBookmarkArticle.backgroundTintList = ColorStateList.valueOf(color)
+//                    }
+//                    .show()
+//                Logger.d("Bookmark Removed")
+//            }
+        }
+
+        val webViewState = savedInstanceState?.getBundle("webViewState")
+
+        webViewState?.let {
+
+            binding.fgAtWvArticle.restoreState(it)
+        } ?: run {
+
+            binding.fgAtWvArticle.loadUrl(articleUrl)
+        }
     }
+
+    private fun updateBookmarkIcon(isBookmarked: Boolean) {
+
+        if (isBookmarked) {
+
+            val color = ContextCompat.getColor(requireContext(), R.color.blue)
+            binding.fgAtFabBookmarkArticle.backgroundTintList = ColorStateList.valueOf(color)
+        } else {
+
+            val color = ContextCompat.getColor(requireContext(), R.color.lightGrey)
+            binding.fgAtFabBookmarkArticle.backgroundTintList = ColorStateList.valueOf(color)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val webViewState = Bundle()
+        binding.fgAtWvArticle.saveState(webViewState)
+        outState.putBundle("webViewState", webViewState)
+    }
+
+//    override fun onResume() {
+//        super.onResume()
+//
+//        articleViewModel.getWebViewStateValue()?.let {
+//            binding.fgAtWvArticle.restoreState(it)
+//        } ?: run {
+//            binding.fgAtWvArticle.loadUrl(args.articleItem.url)
+//        }
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//
+//        val webViewState = Bundle()
+//        binding.fgAtWvArticle.saveState(webViewState)
+//
+//        articleViewModel.saveWebViewState(webViewState)
+//    }
 
     override fun onDestroy() {
         super.onDestroy()

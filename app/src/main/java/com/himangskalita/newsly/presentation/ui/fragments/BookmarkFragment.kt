@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.himangskalita.newsly.databinding.FragmentBookmarksBinding
 import com.himangskalita.newsly.presentation.adapter.BookmarkAdapter
@@ -16,8 +17,6 @@ import com.himangskalita.newsly.presentation.viewmodel.BookmarkViewModel
 import com.himangskalita.newsly.utils.Logger
 import com.himangskalita.newsly.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -26,7 +25,11 @@ class BookmarkFragment : Fragment() {
     private var _binding: FragmentBookmarksBinding? = null
     private val binding get() = _binding!!
     private val bookmarkViewModel: BookmarkViewModel by viewModels()
-    private val bookmarkAdapter by lazy { BookmarkAdapter() }
+    private val bookmarkAdapter by lazy { BookmarkAdapter{ article ->
+
+        val action = BookmarkFragmentDirections.actionFgBookmarksToFgArticle(article)
+        findNavController().navigate(action)
+    } }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -120,6 +123,11 @@ class BookmarkFragment : Fragment() {
     private fun getDatabaseBookmarks() {
 
         bookmarkViewModel.getBookmarkArticlesList()
+    }
+
+    fun scrollToTop() {
+
+        binding.fgBmRvBookmarkList.smoothScrollToPosition(0)
     }
 
     override fun onDestroy() {

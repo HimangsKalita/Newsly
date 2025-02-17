@@ -18,6 +18,9 @@ interface BookmarkArticleDao {
     @Query("SELECT * FROM bookmark_articles")
     suspend fun getBookmarkArticles(): List<BookmarkArticle>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM bookmark_articles WHERE url = :url)")
+    suspend fun isArticleBookmarked(url: String): Boolean
+
     @Query("DELETE FROM bookmark_articles")
     suspend fun clearBookmarkArticles()
 

@@ -18,49 +18,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/fgAtTvError"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Error Loading Website"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.45" />
-
-    <Button
-        android:id="@+id/fgAtBtnReload"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@color/blue"
-        android:text="Reload"
-        android:textSize="20sp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fgAtTvError" />
-
     <WebView
         android:id="@+id/fgAtWvArticle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fgAtFabBookmarkArticle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="Bookmark button to save articles for later"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp"
         android:src="@drawable/baseline_bookmark_24"
-        app:backgroundTint="@color/blue"
+        app:backgroundTint="@color/warningYellow"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="@color/white" />

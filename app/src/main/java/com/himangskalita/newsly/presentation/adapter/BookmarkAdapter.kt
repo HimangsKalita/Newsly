@@ -15,20 +15,30 @@ import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.data.models.BookmarkArticle
 import com.himangskalita.newsly.databinding.ItemBookmarkBinding
 
-class BookmarkAdapter : ListAdapter<BookmarkArticle, BookmarkAdapter.BookmarkViewholder>(DiffUtilComparison()) {
+class BookmarkAdapter(private val onBookmarkClick: (Article) -> Unit) :
+    ListAdapter<BookmarkArticle, BookmarkAdapter.BookmarkViewHolder>(DiffUtilComparison()) {
 
-    inner class BookmarkViewholder(val binding: ItemBookmarkBinding): RecyclerView.ViewHolder(binding.root)
+    inner class BookmarkViewHolder(val binding: ItemBookmarkBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkViewholder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkViewHolder {
 
-        val binding = ItemBookmarkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val layoutInflater = LayoutInflater.from(parent.context)
+        val binding =
+            ItemBookmarkBinding.inflate(layoutInflater, parent, false)
 
-        return BookmarkViewholder(binding)
+        return BookmarkViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: BookmarkViewholder, position: Int) {
+    override fun onBindViewHolder(holder: BookmarkViewHolder, position: Int) {
 
         val bookmarkArticle = getItem(position)
+        val article = convertBookmarkToArticle(bookmarkArticle)
+
+        holder.binding.root.setOnClickListener {
+
+            onBookmarkClick(article)
+        }
 
         if (bookmarkArticle.urlToImage != null) {
 
@@ -40,7 +50,7 @@ class BookmarkAdapter : ListAdapter<BookmarkArticle, BookmarkAdapter.BookmarkVie
                 memoryCachePolicy(CachePolicy.ENABLED)
                 diskCachePolicy(CachePolicy.ENABLED)
             }
-        }else {
+        } else {
 
             holder.binding.inIvImage.load(R.drawable.image_placeholder)
         }
@@ -49,12 +59,18 @@ class BookmarkAdapter : ListAdapter<BookmarkArticle, BookmarkAdapter.BookmarkVie
         holder.binding.inTvTitle.text = bookmarkArticle.title ?: "Title"
         holder.binding.inTvAuthor.text = bookmarkArticle.author ?: "Author"
         holder.binding.inTvPublishedDate.text = bookmarkArticle.publishedAt ?: "Date"
-
-        holder.binding.ItemBookmarkView.setOnClickListener {
-
-
-        }
     }
+
+    private fun convertBookmarkToArticle(bookmarkArticle: BookmarkArticle) = Article(
+        author = bookmarkArticle.author,
+        content = bookmarkArticle.content,
+        description = bookmarkArticle.description,
+        publishedAt = bookmarkArticle.publishedAt,
+        source = bookmarkArticle.source,
+        title = bookmarkArticle.title,
+        url = bookmarkArticle.url,
+        urlToImage = bookmarkArticle.urlToImage
+    )
 
     private class DiffUtilComparison : DiffUtil.ItemCallback<BookmarkArticle>() {
 

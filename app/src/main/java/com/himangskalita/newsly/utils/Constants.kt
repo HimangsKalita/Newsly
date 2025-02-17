@@ -6,7 +6,7 @@ class Constants {
 
         const val BASE_URL = "https://newsapi.org/"
         const val API_VERSION = "v2"
-        const val PAGE_SIZE = 30
+        const val PAGE_SIZE = 20
         const val PAGE = 1
         const val COUNTRY_CODE = "us"
     }

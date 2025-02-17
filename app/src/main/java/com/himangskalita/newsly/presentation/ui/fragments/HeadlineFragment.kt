@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.himangskalita.newsly.R
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.databinding.FragmentHeadlinesBinding
@@ -37,6 +39,7 @@ class HeadlinesFragment : Fragment() {
         val action = HeadlinesFragmentDirections.actionFgHeadlinesToFgArticle(articleItem)
         findNavController().navigate(action)
     } }
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,9 +48,17 @@ class HeadlinesFragment : Fragment() {
 
         _binding = FragmentHeadlinesBinding.inflate(inflater, container, false)
 
+        swipeRefreshLayout = binding.fgHlSrlRefresh
+
         setupRecycleView()
         observeNetworkStatus()
         observeNewsResult()
+
+        swipeRefreshLayout.setOnRefreshListener {
+
+            headlinesViewModel.changeSwipeRefreshLoadingTrue()
+            fetchApiNewsHeadlines()
+        }
 
         return binding.root
     }
@@ -59,6 +70,14 @@ class HeadlinesFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = newsAdapter
         }
+
+        binding.fgHlRvNewsList.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+
+            }
+        })
     }
 
     private fun observeNetworkStatus() {
@@ -93,7 +112,7 @@ class HeadlinesFragment : Fragment() {
 
                                 Logger.d("Hasfetched news: ${headlinesViewModel.hasFetchedNews}")
                                 fetchApiNewsHeadlines()
-                                headlinesViewModel.changeHasFetchedNews()
+                                headlinesViewModel.changeHasFetchedNewsTrue()
                                 Logger.d("Hasfetched news: ${headlinesViewModel.hasFetchedNews}")
                             }else {
 
@@ -189,19 +208,33 @@ class HeadlinesFragment : Fragment() {
 
             is Resource.Loading -> {
 
-                binding.apply {
+                if (headlinesViewModel.swipeRefreshLoading.value!!) {
 
-                    fgHlPbLoading.visibility = View.VISIBLE
-                    fgHlRvNewsList.visibility = View.GONE
-                    fgHlShimmerLayout.visibility = View.VISIBLE
-                    fgHlShimmerLayout.startShimmer()
+                    binding.apply {
+
+                        fgHlRvNewsList.visibility = View.GONE
+                        fgHlShimmerLayout.visibility = View.VISIBLE
+                        fgHlShimmerLayout.startShimmer()
+                    }
+                }else {
+
+                    binding.apply {
+
+                        fgHlPbLoading.visibility = View.VISIBLE
+                        fgHlRvNewsList.visibility = View.GONE
+                        fgHlShimmerLayout.visibility = View.VISIBLE
+                        fgHlShimmerLayout.startShimmer()
+                    }
                 }
             }
 
             is Resource.Success -> {
 
+                headlinesViewModel.changeSwipeRefreshLoadingFalse()
+
                 binding.apply {
 
+                    fgHlSrlRefresh.isRefreshing = false
                     fgHlPbLoading.visibility = View.GONE
                     fgHlShimmerLayout.stopShimmer()
                     fgHlShimmerLayout.visibility = View.GONE
@@ -212,8 +245,11 @@ class HeadlinesFragment : Fragment() {
 
             is Resource.Error -> {
 
+                headlinesViewModel.changeSwipeRefreshLoadingFalse()
+
                 binding.apply {
 
+                    fgHlSrlRefresh.isRefreshing = false
                     fgHlPbLoading.visibility = View.GONE
                     fgHlRvNewsList.visibility = View.VISIBLE
                 }
@@ -234,6 +270,11 @@ class HeadlinesFragment : Fragment() {
 
         Logger.d("Database News Fetch Request")
         headlinesViewModel.fetchDatabaseHeadlines()
+    }
+
+    fun scrollToTop() {
+
+        binding.fgHlRvNewsList.smoothScrollToPosition(0)
     }
 
     override fun onStop() {

@@ -170,6 +170,11 @@ class DatabaseNewsRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun isBookmarked(url: String): Boolean {
+
+        return bookmarkArticleDao.isArticleBookmarked(url)
+    }
+
     override suspend fun deleteBookmarkArticle(url: String) {
 
         bookmarkArticleDao.deleteBookmarkArticle(url)
