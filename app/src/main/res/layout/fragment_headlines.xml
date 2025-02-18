@@ -24,9 +24,9 @@
 
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/fgHlPbLoading"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="50dp"
         android:contentDescription="Loading news"
         android:indeterminateTint="@color/blue"
@@ -40,7 +40,8 @@
         android:id="@+id/fgHlShimmerLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -82,7 +83,7 @@
         android:id="@+id/fgHlSrlRefresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/fgHlPbPaginationLoading"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,10 +94,23 @@
             android:id="@+id/fgHlRvNewsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="5dp" />
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/fgHlPbPaginationLoading"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="10dp"
+        android:contentDescription="Loading more news below"
+        android:indeterminateTint="@color/blue"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

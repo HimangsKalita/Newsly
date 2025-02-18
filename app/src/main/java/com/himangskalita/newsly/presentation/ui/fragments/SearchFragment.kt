@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import com.himangskalita.newsly.R
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.databinding.FragmentSearchBinding
 import com.himangskalita.newsly.presentation.adapter.SearchAdapter
@@ -37,6 +41,7 @@ class SearchFragment : Fragment() {
             findNavController().navigate(action)
         }
     }
+    private var userScrolled = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,6 +66,45 @@ class SearchFragment : Fragment() {
 
             adapter = searchAdapter
         }
+
+        binding.fgSrRvNewsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+
+                    userScrolled = true
+                }
+            }
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
+                val layoutManager = binding.fgSrRvNewsList.layoutManager as LinearLayoutManager
+
+                if (dy > 1) {
+
+                    val visibleItemCount = layoutManager.childCount
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                    val totalItemCount = layoutManager.itemCount
+
+                    Logger.d("visibleItemCount: $visibleItemCount\nfirstVisibleItemPosition: $firstVisibleItemPosition\ntotalItemCount: $totalItemCount")
+
+                    if (userScrolled && firstVisibleItemPosition + visibleItemCount >= totalItemCount) {
+
+                        Logger.d("Reached end of list")
+
+                        Logger.d("Requesting search pagination")
+
+                        val searchQuery = binding.fgSrSvSearchNews.query?.toString() ?: ""
+                        if (searchQuery.isNotEmpty()) {
+
+                            searchViewModel.searchNewsQueryPagination(binding.fgSrSvSearchNews.query.toString())
+                        }
+                    }
+                }
+            }
+        })
     }
 
 //    private fun observeNetworkState() {
@@ -155,6 +199,13 @@ class SearchFragment : Fragment() {
                 Logger.d("Initial state of viewmodel")
             }
 
+            is Resource.SwipeLoading -> {}
+
+            is Resource.PaginationLoading -> {
+
+                binding.fgSrPbPaginationSearchLoading.visibility = View.VISIBLE
+            }
+
             is Resource.Loading -> {
 
                 binding.apply {
@@ -172,6 +223,7 @@ class SearchFragment : Fragment() {
 
                 binding.apply {
 
+                    binding.fgSrPbPaginationSearchLoading.visibility = View.GONE
                     fgSrPbSearchingNews.visibility = View.GONE
                     fgHlShimmerLayout.stopShimmer()
                     fgHlShimmerLayout.visibility = View.GONE
@@ -184,6 +236,7 @@ class SearchFragment : Fragment() {
 
                 binding.apply {
 
+                    binding.fgSrPbPaginationSearchLoading.visibility = View.GONE
                     fgSrPbSearchingNews.visibility = View.GONE
                     fgHlShimmerLayout.stopShimmer()
                     fgHlShimmerLayout.visibility = View.GONE
@@ -196,9 +249,23 @@ class SearchFragment : Fragment() {
 
                     binding.fgSrTvEmpty.visibility = View.VISIBLE
                     binding.fgSrRvNewsList.visibility = View.GONE
-                }else {
+                } else {
 
-                    binding.fgSrTvError.visibility = View.VISIBLE
+                    if (searchAdapter.itemCount > 0) {
+
+                        Snackbar.make(binding.root, "Error fetching news", Snackbar.LENGTH_SHORT).let { snackbar ->
+                            snackbar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.lightBlue))
+                            snackbar.setAction("OK") {
+                                snackbar.dismiss()
+                                Logger.d("OK clicked!")
+                            }
+                            snackbar.show()
+                        }
+
+                    } else {
+
+                        binding.fgSrTvError.visibility = View.VISIBLE
+                    }
                 }
 
                 Logger.d("Error fetching bookmarks: " + result.message.toString())
@@ -209,6 +276,7 @@ class SearchFragment : Fragment() {
     private fun searchNewsQuery(query: String?) {
 
         if (!query.isNullOrEmpty()) {
+
 
             searchViewModel.searchNewsQuery(query)
         }

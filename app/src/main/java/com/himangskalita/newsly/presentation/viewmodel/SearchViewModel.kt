@@ -1,14 +1,16 @@
 package com.himangskalita.newsly.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.data.repository.ApiNewsRepository
 import com.himangskalita.newsly.utils.ConnectivityObserver
-import com.himangskalita.newsly.utils.NetworkUIState
 import com.himangskalita.newsly.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -31,6 +33,16 @@ class SearchViewModel @Inject constructor(
     private var _hasFetchSearch = false
     val hasFetchSearch: Boolean
         get() = _hasFetchSearch
+
+    private var isPaginationSearching = false
+    fun changePaginationTrue() {
+
+        isPaginationSearching = true
+    }
+
+    private val articleList = mutableListOf<Article>()
+    private var headlinePage = 1
+    fun incrementHeadlinePage() = headlinePage++
 
 //    init {
 //
@@ -68,7 +80,8 @@ class SearchViewModel @Inject constructor(
 
                     onSuccess = { articles ->
 
-                        Resource.Success(articles)
+                        articleList.addAll(articles)
+                        Resource.Success(articleList)
                     },
                     onFailure = { throwable ->
 
@@ -84,6 +97,50 @@ class SearchViewModel @Inject constructor(
                 _result.value = Resource.Error(
                     e.message ?: "An error occurred searching news from api", emptyList()
                 )
+            }
+        }
+    }
+
+    fun searchNewsQueryPagination(query: String) {
+
+        if (isPaginationSearching) return
+
+        changePaginationTrue()
+
+        _result.value = Resource.PaginationLoading()
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            delay(1500)
+
+            try {
+
+                val result = newsRepository.searchNewsPagination(query, headlinePage)
+
+                _result.value = result.fold(
+
+                    onSuccess = { articles ->
+
+                        incrementHeadlinePage()
+                        Resource.Success(articleList + articles)
+                    },
+                    onFailure = { throwable ->
+
+                        Resource.Error(
+                            throwable.message ?: "An error occurred fetching api news",
+                            emptyList()
+                        )
+                    }
+                )
+
+            }catch (e: Exception) {
+
+                _result.value = Resource.Error(
+                    e.message ?: "An error occurred searching news from api", emptyList()
+                )
+            }finally {
+
+                isPaginationSearching = false
             }
         }
     }

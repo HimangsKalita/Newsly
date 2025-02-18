@@ -25,11 +25,13 @@ class BookmarkFragment : Fragment() {
     private var _binding: FragmentBookmarksBinding? = null
     private val binding get() = _binding!!
     private val bookmarkViewModel: BookmarkViewModel by viewModels()
-    private val bookmarkAdapter by lazy { BookmarkAdapter{ article ->
+    private val bookmarkAdapter by lazy {
+        BookmarkAdapter { article ->
 
-        val action = BookmarkFragmentDirections.actionFgBookmarksToFgArticle(article)
-        findNavController().navigate(action)
-    } }
+            val action = BookmarkFragmentDirections.actionFgBookmarksToFgArticle(article)
+            findNavController().navigate(action)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,6 +67,7 @@ class BookmarkFragment : Fragment() {
                     when (bookmarkList) {
 
                         is Resource.Ini -> {}
+
                         is Resource.Loading -> {
 
                             binding.apply {
@@ -76,6 +79,13 @@ class BookmarkFragment : Fragment() {
                                 fgBmShimmerLayout.startShimmer()
 
                             }
+                        }
+
+                        is Resource.PaginationLoading -> {}
+
+                        is Resource.SwipeLoading -> {
+
+//                            binding.fgHlPbPaginationLoading.visibility = View.VISIBLE
                         }
 
                         is Resource.Success -> {
@@ -107,7 +117,7 @@ class BookmarkFragment : Fragment() {
 
                                 binding.fgBmTvEmpty.visibility = View.VISIBLE
                                 binding.fgBmRvBookmarkList.visibility = View.GONE
-                            }else {
+                            } else {
 
                                 binding.fgBmRvBookmarkList.visibility = View.VISIBLE
                             }

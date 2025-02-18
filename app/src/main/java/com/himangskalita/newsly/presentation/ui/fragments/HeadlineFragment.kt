@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -13,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import com.himangskalita.newsly.R
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.databinding.FragmentHeadlinesBinding
@@ -34,12 +36,16 @@ class HeadlinesFragment : Fragment() {
     private var _binding: FragmentHeadlinesBinding? = null
     private val binding get() = _binding!!
     private val headlinesViewModel: HeadlinesViewModel by viewModels()
-    private val newsAdapter by lazy { NewsAdapter{articleItem ->
+    private val newsAdapter by lazy {
+        NewsAdapter { articleItem ->
 
-        val action = HeadlinesFragmentDirections.actionFgHeadlinesToFgArticle(articleItem)
-        findNavController().navigate(action)
-    } }
+            val action = HeadlinesFragmentDirections.actionFgHeadlinesToFgArticle(articleItem)
+            findNavController().navigate(action)
+        }
+    }
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private var userScrolled = false
+    private val queryParams = mapOf("category" to "technology")
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,11 +77,37 @@ class HeadlinesFragment : Fragment() {
             adapter = newsAdapter
         }
 
-        binding.fgHlRvNewsList.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        binding.fgHlRvNewsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+
+                    userScrolled = true
+                }
+            }
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
 
+                val layoutManager = binding.fgHlRvNewsList.layoutManager as LinearLayoutManager
 
+                if (dy > 1) {
+
+                    val visibleItemCount = layoutManager.childCount
+                    val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+                    val totalItemCount = layoutManager.itemCount
+
+                    Logger.d("visibleItemCount: $visibleItemCount\nfirstVisibleItemPosition: $firstVisibleItemPosition\ntotalItemCount: $totalItemCount")
+
+                    if (userScrolled && firstVisibleItemPosition + visibleItemCount >= totalItemCount) {
+
+                        Logger.d("Reached end of list")
+
+                        Logger.d("Requesting pagination")
+                        headlinesViewModel.fetchApiHeadlinesPagination(queryParams)
+                    }
+                }
             }
         })
     }
@@ -114,7 +146,7 @@ class HeadlinesFragment : Fragment() {
                                 fetchApiNewsHeadlines()
                                 headlinesViewModel.changeHasFetchedNewsTrue()
                                 Logger.d("Hasfetched news: ${headlinesViewModel.hasFetchedNews}")
-                            }else {
+                            } else {
 
                                 Logger.d("Hasfetched news: ${headlinesViewModel.hasFetchedNews}")
                             }
@@ -208,23 +240,30 @@ class HeadlinesFragment : Fragment() {
 
             is Resource.Loading -> {
 
-                if (headlinesViewModel.swipeRefreshLoading.value!!) {
+                binding.apply {
 
-                    binding.apply {
+                    fgHlPbLoading.visibility = View.VISIBLE
+                    fgHlRvNewsList.visibility = View.GONE
+                    fgHlShimmerLayout.visibility = View.VISIBLE
+                    fgHlShimmerLayout.startShimmer()
+                }
+            }
 
-                        fgHlRvNewsList.visibility = View.GONE
-                        fgHlShimmerLayout.visibility = View.VISIBLE
-                        fgHlShimmerLayout.startShimmer()
-                    }
-                }else {
+            is Resource.SwipeLoading -> {
 
-                    binding.apply {
+                binding.apply {
 
-                        fgHlPbLoading.visibility = View.VISIBLE
-                        fgHlRvNewsList.visibility = View.GONE
-                        fgHlShimmerLayout.visibility = View.VISIBLE
-                        fgHlShimmerLayout.startShimmer()
-                    }
+                    fgHlRvNewsList.visibility = View.GONE
+                    fgHlShimmerLayout.visibility = View.VISIBLE
+                    fgHlShimmerLayout.startShimmer()
+                }
+            }
+
+            is Resource.PaginationLoading -> {
+
+                binding.apply {
+
+                    fgHlPbPaginationLoading.visibility = View.VISIBLE
                 }
             }
 
@@ -234,6 +273,7 @@ class HeadlinesFragment : Fragment() {
 
                 binding.apply {
 
+                    fgHlPbPaginationLoading.visibility = View.GONE
                     fgHlSrlRefresh.isRefreshing = false
                     fgHlPbLoading.visibility = View.GONE
                     fgHlShimmerLayout.stopShimmer()
@@ -249,18 +289,32 @@ class HeadlinesFragment : Fragment() {
 
                 binding.apply {
 
+                    fgHlPbPaginationLoading.visibility = View.GONE
                     fgHlSrlRefresh.isRefreshing = false
                     fgHlPbLoading.visibility = View.GONE
                     fgHlRvNewsList.visibility = View.VISIBLE
                 }
+
+                if (newsAdapter.itemCount > 0) {
+
+                    Snackbar.make(binding.root, "Error fetching news", Snackbar.LENGTH_SHORT).let { snackbar ->
+                        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.lightBlue))
+                        snackbar.setAction("OK") {
+                            snackbar.dismiss()
+                            Logger.d("OK clicked!")
+                        }
+                        snackbar.show()
+                    }
+
+                }
+
                 Logger.d("Error fetching news: " + result.message.toString())
             }
+
         }
     }
 
     private fun fetchApiNewsHeadlines() {
-
-        val queryParams = mapOf("category" to "technology")
 
         Logger.d("Api News Fetch Request")
         headlinesViewModel.fetchApiHeadlines(queryParams)

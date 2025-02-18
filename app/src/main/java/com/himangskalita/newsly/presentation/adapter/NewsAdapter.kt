@@ -69,4 +69,9 @@ class NewsAdapter(private val onArticleClick: (Article) -> Unit) : ListAdapter<A
             return oldItem == newItem
         }
     }
+
+    fun isLastItemOfRecyclerView(position: Int): Boolean {
+
+        return position == itemCount - 1
+    }
 }

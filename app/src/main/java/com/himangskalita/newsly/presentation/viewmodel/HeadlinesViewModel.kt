@@ -12,6 +12,7 @@ import com.himangskalita.newsly.utils.Logger
 import com.himangskalita.newsly.utils.NetworkUIState
 import com.himangskalita.newsly.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -28,12 +29,21 @@ class HeadlinesViewModel @Inject constructor(
     private val _result = MutableStateFlow<Resource<List<Article>>>(Resource.Ini())
     val result: StateFlow<Resource<List<Article>>>
         get() = _result
+    private val articleList = mutableListOf<Article>()
     private var headlinePage = 1
-    fun getHeadlinePageCount() = headlinePage
+    fun incrementHeadlinePage() = headlinePage++
+    private val _isPaginationFetching = MutableLiveData(false)
+    val isPaginationFetching: LiveData<Boolean>
+        get() = _isPaginationFetching
+    fun changePaginationTrue() {
+
+        _isPaginationFetching.value = true
+    }
 
     private var _hasFetchedNews = false
     val hasFetchedNews: Boolean
         get() = _hasFetchedNews
+
     fun changeHasFetchedNewsTrue() {
 
         _hasFetchedNews = true
@@ -46,22 +56,26 @@ class HeadlinesViewModel @Inject constructor(
     private val _firstConnection = MutableLiveData(true)
     val firstConnection: LiveData<Boolean>
         get() = _firstConnection
+
     fun changeFirstConnectionValue() {
 
         _firstConnection.value = false
     }
+
     fun changeFirstConnectionValueTrue() {
 
         _firstConnection.value = true
     }
 
-    private val _swipeRefreshLoading = MutableLiveData<Boolean>(false)
+    private val _swipeRefreshLoading = MutableLiveData(false)
     val swipeRefreshLoading: LiveData<Boolean>
         get() = _swipeRefreshLoading
+
     fun changeSwipeRefreshLoadingFalse() {
 
         _swipeRefreshLoading.value = false
     }
+
     fun changeSwipeRefreshLoadingTrue() {
 
         _swipeRefreshLoading.value = true
@@ -99,7 +113,7 @@ class HeadlinesViewModel @Inject constructor(
 
     fun fetchApiHeadlines(queryParams: Map<String, String>) {
 
-        _result.value = Resource.Loading()
+        if (_swipeRefreshLoading.value!!) _result.value = Resource.SwipeLoading() else _result.value = Resource.Loading()
 
         viewModelScope.launch {
 
@@ -111,8 +125,8 @@ class HeadlinesViewModel @Inject constructor(
                 _result.value = response.fold(
 
                     onSuccess = { articles ->
-
-                        Resource.Success(articles)
+                        articleList.addAll(articles)
+                        Resource.Success(articleList)
                     },
                     onFailure = { throwable ->
 
@@ -129,6 +143,57 @@ class HeadlinesViewModel @Inject constructor(
                     e.message ?: "An error occurred fetching news from api",
                     emptyList()
                 )
+            }
+
+        }
+    }
+
+    fun fetchApiHeadlinesPagination(queryParams: Map<String, String>) {
+
+        if (_isPaginationFetching.value!!) return
+
+        changePaginationTrue()
+
+        _result.value = Resource.PaginationLoading()
+
+        viewModelScope.launch {
+
+            delay(1000)
+
+            try {
+
+                val response =
+                    apiNewsRepository.getNewsHeadlinesPagination(
+                        queryParams,
+                        headlinePage = headlinePage
+                    )
+
+                _result.value = response.fold(
+
+                    onSuccess = { articles ->
+
+                        incrementHeadlinePage()
+                        articleList.addAll(articles)
+                        Resource.Success(articleList)
+                    },
+                    onFailure = { throwable ->
+
+                        Resource.Error(
+                            throwable.message ?: "An error occurred fetching api news",
+                            emptyList()
+                        )
+                    }
+                )
+
+            } catch (e: Exception) {
+
+                _result.value = Resource.Error(
+                    e.message ?: "An error occurred fetching news from api",
+                    emptyList()
+                )
+            } finally {
+
+                _isPaginationFetching.value = false
             }
 
         }
