@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".presentation.ui.fragments.HeadlinesFragment">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fgHlTvInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,6 @@
         android:paddingBottom="7dp"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +28,6 @@
         android:layout_height="40dp"
         android:layout_marginTop="50dp"
         android:contentDescription="Loading news"
-        android:indeterminateTint="@color/blue"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -106,7 +104,6 @@
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
         android:contentDescription="Loading more news below"
-        android:indeterminateTint="@color/blue"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

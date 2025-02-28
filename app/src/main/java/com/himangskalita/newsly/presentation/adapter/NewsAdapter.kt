@@ -54,7 +54,7 @@ class NewsAdapter(private val onArticleClick: (Article) -> Unit) : ListAdapter<A
         holder.binding.inTvSource.text = articleItem.source?.name ?: "Source"
         holder.binding.inTvTitle.text = articleItem.title ?: "Title"
         holder.binding.inTvAuthor.text = articleItem.author ?: "Author"
-        holder.binding.inTvPublishedDate.text = articleItem.publishedAt ?: "Date"
+        holder.binding.inTvPublishedDate.text = articleItem.publishedAt?.formattedDate ?: "(Date)"
 
     }
 

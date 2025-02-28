@@ -6,23 +6,17 @@
         android:id="@+id/fgHeadlines"
         android:title="Home"
         android:contentDescription="Home menu of news section"
-        android:icon="@drawable/baseline_home_filled_24"/>
+        android:icon="@drawable/home_icon"/>
 
     <item
         android:id="@+id/fgSearch"
         android:title="Search"
         android:contentDescription="Search menu to search for news"
-        android:icon="@drawable/baseline_search_24"/>
+        android:icon="@drawable/search_24px"/>
 
     <item
         android:id="@+id/fgBookmarks"
         android:title="Bookmarks"
         android:contentDescription="Bookmarks menu for all the bookmark news list"
-        android:icon="@drawable/baseline_bookmark_24"/>
-
-    <item
-        android:id="@+id/fgSettings"
-        android:title="Settings"
-        android:contentDescription="Settings menu of the app to change preferences"
-        android:icon="@drawable/baseline_settings_24"/>
+        android:icon="@drawable/bookmark_icon"/>
 </menu>

@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.33"
-        app:shapeAppearanceOverlay="@style/circularImageView" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium" />
 
     <LinearLayout
         android:id="@+id/inLlText"
@@ -27,7 +27,7 @@
         app:layout_constraintStart_toEndOf="@id/inIvImage"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inTvSource"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
             app:layout_constraintStart_toEndOf="@id/inIvImage"
             app:layout_constraintTop_toTopOf="@id/inIvImage" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inTvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
         app:layout_constraintStart_toEndOf="@id/inIvImage"
         app:layout_constraintTop_toBottomOf="@id/inLlText">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inTvAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             android:textColor="@color/greyFont"
             android:textSize="15sp" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inTvBulletPoint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
             android:textColor="@color/greyFont"
             android:textSize="20sp" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/inTvPublishedDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.data.repository.ApiNewsRepository
 import com.himangskalita.newsly.utils.ConnectivityObserver
+import com.himangskalita.newsly.utils.Logger
 import com.himangskalita.newsly.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +42,7 @@ class SearchViewModel @Inject constructor(
     }
 
     private val articleList = mutableListOf<Article>()
-    private var headlinePage = 1
+    private var headlinePage = 2
     fun incrementHeadlinePage() = headlinePage++
 
 //    init {
@@ -80,8 +81,7 @@ class SearchViewModel @Inject constructor(
 
                     onSuccess = { articles ->
 
-                        articleList.addAll(articles)
-                        Resource.Success(articleList)
+                        Resource.Success(articles)
                     },
                     onFailure = { throwable ->
 
@@ -111,7 +111,7 @@ class SearchViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
 
-            delay(1500)
+            delay(1000)
 
             try {
 

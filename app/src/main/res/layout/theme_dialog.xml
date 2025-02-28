@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    style="@style/ShapeAppearance.Material3.Corner.Medium"
+    android:theme="@style/ShapeAppearance.Material3.Corner.Medium">
+
+    <RadioGroup
+        android:id="@+id/tdRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/tdRbSystemDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="System Default"/>
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/tdRbLightTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Light"/>
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+            android:id="@+id/tdRbDarkTheme"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dark"/>
+
+    </RadioGroup>
+
+</LinearLayout>

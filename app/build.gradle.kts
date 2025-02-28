@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.webkit)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -123,6 +124,16 @@ dependencies {
 
     //swipt to refresh
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+
+    // Material 3
+//    implementation(libs.material3)
+    implementation("com.google.android.material:material:1.11.0")
+
+    //androidx preference
+    implementation("androidx.preference:preference-ktx:1.2.1")
+
+    //Splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1t")
 }
 
 

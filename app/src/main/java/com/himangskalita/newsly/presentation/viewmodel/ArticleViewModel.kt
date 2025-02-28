@@ -48,28 +48,6 @@ class ArticleViewModel @Inject constructor(
         }
     }
 
-    fun addBookmarkArticle(article: Article) {
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            val bookmarkArticle = mapToBookmarkArticle(article)
-            databaseNewsRepository.saveBookmark(bookmarkArticle)
-        }
-
-        _isBookMarked.postValue(true)
-    }
-
-    fun deleteBookmarkArticle(url: String) {
-
-        viewModelScope.launch(Dispatchers.IO) {
-
-            databaseNewsRepository.deleteBookmarkArticle(url)
-
-        }
-
-        _isBookMarked.postValue(false)
-    }
-
     private fun mapToBookmarkArticle(article: Article): BookmarkArticle {
 
         return BookmarkArticle(
@@ -77,21 +55,11 @@ class ArticleViewModel @Inject constructor(
             author = article.author ?: "Author",
             content = article.content ?: "",
             description = article.description ?: "",
-            publishedAt = article.publishedAt ?: "XXXX-XX-XX",
+            publishedAt = article.publishedAt?.formattedDate ?: "(Date)",
             source = article.source ?: Source("Souce ID", "Source"),
             title = article.title ?: "Article Title",
             url = article.url,
             urlToImage = article.urlToImage,
         )
-    }
-
-    fun saveWebViewState(webViewState: Bundle?) {
-
-        _webViewState.postValue(webViewState)
-    }
-
-    fun getWebViewStateValue(): Bundle? {
-
-        return _webViewState.value
     }
 }

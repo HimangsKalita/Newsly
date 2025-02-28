@@ -3,16 +3,23 @@ package com.himangskalita.newsly.presentation.ui.fragments
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +28,7 @@ import com.himangskalita.newsly.R
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.databinding.FragmentSearchBinding
 import com.himangskalita.newsly.presentation.adapter.SearchAdapter
+import com.himangskalita.newsly.presentation.ui.activities.MainActivity
 import com.himangskalita.newsly.presentation.viewmodel.SearchViewModel
 import com.himangskalita.newsly.utils.Logger
 import com.himangskalita.newsly.utils.Resource
@@ -41,6 +49,10 @@ class SearchFragment : Fragment() {
             findNavController().navigate(action)
         }
     }
+
+    //    private lateinit var searchItem: MenuItem
+//    private lateinit var searchView: SearchView
+//    private var menuProvider:MenuProvider? = null
     private var userScrolled = false
 
     override fun onCreateView(
@@ -51,8 +63,8 @@ class SearchFragment : Fragment() {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         setupRecyclerView()
+        setupSearchBar()
 //        observeNetworkState()
-        handleSearchQuery()
         observeNewsSearchResult()
 
         return binding.root
@@ -66,6 +78,11 @@ class SearchFragment : Fragment() {
 
             adapter = searchAdapter
         }
+
+        setupSearchPagination()
+    }
+
+    private fun setupSearchPagination() {
 
         binding.fgSrRvNewsList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
@@ -96,15 +113,63 @@ class SearchFragment : Fragment() {
 
                         Logger.d("Requesting search pagination")
 
-                        val searchQuery = binding.fgSrSvSearchNews.query?.toString() ?: ""
+//                        val searchQuery = searchView.query.toString().trim()
+                        val searchQuery = binding.fgSrSvSearchViewNews.text.toString().trim()
                         if (searchQuery.isNotEmpty()) {
 
-                            searchViewModel.searchNewsQueryPagination(binding.fgSrSvSearchNews.query.toString())
+                            searchViewModel.searchNewsQueryPagination(searchQuery)
                         }
                     }
                 }
             }
         })
+    }
+
+
+    private fun setupSearchBar() {
+
+        binding.fgSrSvSearchBarNews.setOnClickListener {
+
+            (activity as? MainActivity)?.supportActionBar?.hide()
+            binding.fgSrSvSearchBarNews.visibility = View.GONE
+            binding.fgSrSvSearchViewNews.show()
+        }
+
+        binding.fgSrSvSearchViewNews.editText.setOnEditorActionListener { textView, actionId, _ ->
+
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+
+                val query = textView.text.toString().trim()
+
+                if (query.isNotEmpty()) {
+
+                    searchNewsQuery(query)
+
+                    binding.fgSrSvSearchBarNews.setText(query)
+
+                    binding.fgSrSvSearchViewNews.hide()
+
+                }
+
+                return@setOnEditorActionListener true
+            } else {
+
+                return@setOnEditorActionListener false
+            }
+        }
+
+        binding.fgSrSvSearchViewNews.editText.setOnFocusChangeListener { _, hasFocus ->
+
+            if (!hasFocus) {
+                binding.fgSrSvSearchBarNews.visibility = View.VISIBLE
+                (activity as? MainActivity)?.supportActionBar?.show()
+            }
+        }
+    }
+
+    private fun searchNewsQuery(query: String) {
+
+        searchViewModel.searchNewsQuery(query)
     }
 
 //    private fun observeNetworkState() {
@@ -157,26 +222,6 @@ class SearchFragment : Fragment() {
 //        }
 //    }
 
-    private fun handleSearchQuery() {
-
-        binding.fgSrSvSearchNews.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-
-            override fun onQueryTextSubmit(query: String?): Boolean {
-
-                searchNewsQuery(query)
-                binding.root.hideKeyboard()
-
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-
-
-                return true
-            }
-        })
-    }
-
     private fun observeNewsSearchResult() {
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -212,7 +257,7 @@ class SearchFragment : Fragment() {
 
                     binding.fgSrTvEmpty.visibility = View.GONE
                     binding.fgSrTvError.visibility = View.GONE
-                    fgSrPbSearchingNews.visibility = View.VISIBLE
+                    fgSrProgressBarNews.visibility = View.VISIBLE
                     fgSrRvNewsList.visibility = View.GONE
                     fgHlShimmerLayout.visibility = View.VISIBLE
                     fgHlShimmerLayout.startShimmer()
@@ -224,7 +269,7 @@ class SearchFragment : Fragment() {
                 binding.apply {
 
                     binding.fgSrPbPaginationSearchLoading.visibility = View.GONE
-                    fgSrPbSearchingNews.visibility = View.GONE
+                    fgSrProgressBarNews.visibility = View.GONE
                     fgHlShimmerLayout.stopShimmer()
                     fgHlShimmerLayout.visibility = View.GONE
                     fgSrRvNewsList.visibility = View.VISIBLE
@@ -237,7 +282,7 @@ class SearchFragment : Fragment() {
                 binding.apply {
 
                     binding.fgSrPbPaginationSearchLoading.visibility = View.GONE
-                    fgSrPbSearchingNews.visibility = View.GONE
+                    fgSrProgressBarNews.visibility = View.GONE
                     fgHlShimmerLayout.stopShimmer()
                     fgHlShimmerLayout.visibility = View.GONE
 //                    fgSrRvNewsList.visibility = View.VISIBLE
@@ -253,14 +298,20 @@ class SearchFragment : Fragment() {
 
                     if (searchAdapter.itemCount > 0) {
 
-                        Snackbar.make(binding.root, "Error fetching news", Snackbar.LENGTH_SHORT).let { snackbar ->
-                            snackbar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.lightBlue))
-                            snackbar.setAction("OK") {
-                                snackbar.dismiss()
-                                Logger.d("OK clicked!")
+                        Snackbar.make(binding.root, "Error fetching news", Snackbar.LENGTH_SHORT)
+                            .let { snackbar ->
+                                snackbar.setActionTextColor(
+                                    ContextCompat.getColor(
+                                        requireContext(),
+                                        R.color.lightBlue
+                                    )
+                                )
+                                snackbar.setAction("OK") {
+                                    snackbar.dismiss()
+                                    Logger.d("OK clicked!")
+                                }
+                                snackbar.show()
                             }
-                            snackbar.show()
-                        }
 
                     } else {
 
@@ -273,19 +324,52 @@ class SearchFragment : Fragment() {
         }
     }
 
-    private fun searchNewsQuery(query: String?) {
-
-        if (!query.isNullOrEmpty()) {
-
-
-            searchViewModel.searchNewsQuery(query)
-        }
-    }
+//    private fun setupToolbarSearchView() {
+//
+//        val menuHost: MenuHost = requireActivity()
+//
+//        menuHost.addMenuProvider(object : MenuProvider {
+//
+//            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+//
+//                val searchItem = menu.findItem(R.id.action_search)
+//                val searchView = searchItem.actionView as SearchView
+//
+//                searchItem.expandActionView()
+//
+//                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+//
+//                    override fun onQueryTextSubmit(query: String?): Boolean {
+//
+//                        if (!query.isNullOrEmpty()) {
+//
+//                            searchNewsQuery(query)
+//                        }
+//
+//                        return true
+//                    }
+//
+//                    override fun onQueryTextChange(newText: String?): Boolean {
+//
+//                        return true
+//                    }
+//                })
+//            }
+//
+//            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+//
+//                return true
+//            }
+//        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+//    }
 
     fun resetSearchFragment() {
 
         binding.root.hideKeyboard()
-        binding.fgSrSvSearchNews.setQuery("", false)
+//        searchView.setQuery("", false)
+//        searchItem.collapseActionView()
+        binding.fgSrSvSearchBarNews.setText("")
+        binding.fgSrSvSearchViewNews.setText("")
         binding.fgSrRvNewsList.visibility = View.GONE
     }
 
@@ -297,6 +381,15 @@ class SearchFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+
+//        val menuHost = requireActivity()
+//        menuProvider.let {
+//
+//            menuHost.removeMenuProvider(it!!)
+//        }
+//        menuProvider = null
+
         _binding = null
     }
+
 }

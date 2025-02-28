@@ -54,7 +54,7 @@ class SearchAdapter(private val onSearchArticleClicked: (Article) -> Unit): List
         holder.binding.inTvSource.text = searchArticleItem.source?.name ?: "Source"
         holder.binding.inTvTitle.text = searchArticleItem.title ?: "Title"
         holder.binding.inTvAuthor.text = searchArticleItem.author ?: "Author"
-        holder.binding.inTvPublishedDate.text = searchArticleItem.publishedAt ?: "Date"
+        holder.binding.inTvPublishedDate.text = searchArticleItem.publishedAt?.formattedDate ?: "(Date)"
     }
 
     private class DiffUtilComparison(): DiffUtil.ItemCallback<Article>() {

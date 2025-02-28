@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 import javax.annotation.Nonnull
 
 @Parcelize
@@ -13,7 +14,7 @@ data class Article(
     val author: String?,
     val content: String?,
     val description: String?,
-    val publishedAt: String?,
+    val publishedAt: PublishedAt?,
     val source: Source?,
     val title: String?,
     @PrimaryKey(autoGenerate = false)

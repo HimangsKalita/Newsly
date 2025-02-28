@@ -1,5 +1,7 @@
 package com.himangskalita.newsly.data.api
 
+import com.google.gson.GsonBuilder
+import com.himangskalita.newsly.data.models.PublishedAt
 import com.himangskalita.newsly.utils.Constants.Companion.BASE_URL
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -17,9 +19,13 @@ object RetrofitBuilder {
             .addInterceptor(logging)
             .build()
 
+        val gson = GsonBuilder()
+            .registerTypeAdapter(PublishedAt::class.java, DateTimeDeserializer())
+            .create()
+
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(client)
             .build()
     }

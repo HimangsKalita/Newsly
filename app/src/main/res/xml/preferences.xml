@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="notification"
+        app:title="Notification">
+
+        <SwitchPreference
+            app:key="enable_notification"
+            app:title="Enable Notification"
+            app:icon="@drawable/notifications_outline_24px"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="general"
+        app:title="General">
+
+        <Preference
+            app:key="app_theme"
+            app:title="Theme"
+            app:icon="@drawable/style_outline_24px"
+            app:summary="System Default" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="backup"
+        app:title="Backup">
+
+        <SwitchPreference
+            app:key="enable_backup"
+            app:title="Enable Automatic Backup"
+            app:disableDependentsState="true"
+            app:icon="@drawable/backup_outline_24px"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="about"
+        app:title="About">
+
+        <Preference
+            app:key="feedback"
+            app:title="Send feedback"
+            app:icon="@drawable/feedback_outline_24px"
+            app:summary="Report technical issues or suggest new features"/>
+
+        <Preference
+            app:key="app_version"
+            app:title="Build Version"
+            app:icon="@drawable/info_outline_24px"
+            app:summary="1.0.0" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

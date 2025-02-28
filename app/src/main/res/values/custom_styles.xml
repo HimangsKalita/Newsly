@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="circularImageView">
-        <item name="cornerSize">10%</item>
-        <item name="cornerFamily">rounded</item>
+<!--    <style name="circularImageView">-->
+<!--        <item name="cornerSize">10%</item>-->
+<!--        <item name="cornerFamily">rounded</item>-->
+<!--    </style>-->
+
+    <style name="shimmerOutlinedCardViewStyle" parent="Widget.Material3.CardView.Outlined">
+        <item name="strokeColor">@color/shimmerColor</item>
+        <item name="strokeWidth">3dp</item>
     </style>
 
 </resources>

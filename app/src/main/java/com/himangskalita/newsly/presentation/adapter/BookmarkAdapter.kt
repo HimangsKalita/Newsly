@@ -13,19 +13,20 @@ import coil3.request.placeholder
 import com.himangskalita.newsly.R
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.data.models.BookmarkArticle
-import com.himangskalita.newsly.databinding.ItemBookmarkBinding
+import com.himangskalita.newsly.data.models.PublishedAt
+import com.himangskalita.newsly.databinding.ItemNewsBinding
 
 class BookmarkAdapter(private val onBookmarkClick: (Article) -> Unit) :
     ListAdapter<BookmarkArticle, BookmarkAdapter.BookmarkViewHolder>(DiffUtilComparison()) {
 
-    inner class BookmarkViewHolder(val binding: ItemBookmarkBinding) :
+    inner class BookmarkViewHolder(val binding: ItemNewsBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookmarkViewHolder {
 
         val layoutInflater = LayoutInflater.from(parent.context)
         val binding =
-            ItemBookmarkBinding.inflate(layoutInflater, parent, false)
+            ItemNewsBinding.inflate(layoutInflater, parent, false)
 
         return BookmarkViewHolder(binding)
     }
@@ -58,14 +59,14 @@ class BookmarkAdapter(private val onBookmarkClick: (Article) -> Unit) :
         holder.binding.inTvSource.text = bookmarkArticle.source?.name ?: "Source"
         holder.binding.inTvTitle.text = bookmarkArticle.title ?: "Title"
         holder.binding.inTvAuthor.text = bookmarkArticle.author ?: "Author"
-        holder.binding.inTvPublishedDate.text = bookmarkArticle.publishedAt ?: "Date"
+        holder.binding.inTvPublishedDate.text = bookmarkArticle.publishedAt ?: "(Date)"
     }
 
     private fun convertBookmarkToArticle(bookmarkArticle: BookmarkArticle) = Article(
         author = bookmarkArticle.author,
         content = bookmarkArticle.content,
         description = bookmarkArticle.description,
-        publishedAt = bookmarkArticle.publishedAt,
+        publishedAt = PublishedAt(bookmarkArticle.publishedAt ?: "(Date)"),
         source = bookmarkArticle.source,
         title = bookmarkArticle.title,
         url = bookmarkArticle.url,

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".presentation.ui.fragments.BookmarkFragment">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fgBmTvInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,6 @@
         android:paddingBottom="7dp"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,15 +21,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fgBmTvEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:text="No Boomarks, try adding bookmarks by clicking on the bookmark icon in a article"
+        style="@style/TextAppearance.Material3.HeadlineSmall"
+        android:text="No Boomarks, try adding bookmarks by clicking on the add bookmark icon in a article"
+        android:textSize="18sp"
         android:textAlignment="center"
-        android:textSize="22sp"
-        android:drawableBottom="@drawable/baseline_bookmark_24"
+        app:fontFamily="@font/inter_18pt_medium"
+        android:textColor="@color/noBookmarkTextColor"
+        android:drawableBottom="@drawable/bookmark_outline_24px"
+        app:drawableTint="@color/noBookmarkTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"

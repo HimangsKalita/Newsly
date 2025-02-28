@@ -173,7 +173,7 @@ class HeadlinesFragment : Fragment() {
 
             lifecycleScope.launch {
 
-                delay(1500)
+                delay(1000)
                 withContext(Dispatchers.Main) {
 
                     visibility = View.GONE
@@ -297,15 +297,26 @@ class HeadlinesFragment : Fragment() {
 
                 if (newsAdapter.itemCount > 0) {
 
-                    Snackbar.make(binding.root, "Error fetching news", Snackbar.LENGTH_SHORT).let { snackbar ->
-                        snackbar.setActionTextColor(ContextCompat.getColor(requireContext(), R.color.lightBlue))
-                        snackbar.setAction("OK") {
-                            snackbar.dismiss()
-                            Logger.d("OK clicked!")
-                        }
-                        snackbar.show()
+                    binding.apply {
+
+                        fgHlShimmerLayout.stopShimmer()
+                        fgHlShimmerLayout.visibility = View.GONE
                     }
 
+                    Snackbar.make(binding.root, "Error fetching news", Snackbar.LENGTH_SHORT)
+                        .let { snackbar ->
+                            snackbar.setActionTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.lightBlue
+                                )
+                            )
+                            snackbar.setAction("OK") {
+                                snackbar.dismiss()
+                                Logger.d("OK clicked!")
+                            }
+                            snackbar.show()
+                        }
                 }
 
                 Logger.d("Error fetching news: " + result.message.toString())

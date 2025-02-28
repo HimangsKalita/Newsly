@@ -1,103 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/inClItemContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="15dp">
+    style="@style/Widget.Material3.CardView.Filled"
+    app:cardBackgroundColor="@color/md_theme_surfaceContainerLow"
+    android:layout_marginLeft="14dp"
+    android:layout_marginRight="14dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/inIvImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_launcher_background"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.33"
-        app:shapeAppearanceOverlay="@style/circularImageView" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp">
 
-    <LinearLayout
-        android:id="@+id/inLlText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/inIvImage"
-        app:layout_constraintTop_toTopOf="parent">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/inIvImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.33"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Medium"/>
 
-        <TextView
-            android:id="@+id/inTvSource"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/inLlText"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Source Name"
-            android:textColor="@color/greyFont"
-            android:textSize="13sp"
-            app:layout_constraintStart_toEndOf="@id/inIvImage"
-            app:layout_constraintTop_toTopOf="@id/inIvImage" />
-
-        <TextView
-            android:id="@+id/inTvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:ellipsize="end"
-            android:maxLines="3"
-            android:text="Title"
-            android:textSize="18sp"
-            android:textStyle="bold"
+            android:layout_marginStart="20dp"
+            android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/inIvImage"
-            app:layout_constraintTop_toBottomOf="@id/inTvSource" />
+            app:layout_constraintTop_toTopOf="parent">
 
-    </LinearLayout>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/inTvSource"
+                style="@style/TextAppearance.Material3.HeadlineSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Source Name"
+                app:fontFamily="@font/inter_18pt_medium"
+                android:textColor="@color/greyFont"
+                android:textSize="13sp"
+                app:layout_constraintStart_toEndOf="@id/inIvImage"
+                app:layout_constraintTop_toTopOf="@id/inIvImage" />
 
-    <LinearLayout
-        android:id="@+id/inLlBottomCard"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="12dp"
-        android:gravity="bottom|left"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="@id/inIvImage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/inIvImage"
-        app:layout_constraintTop_toBottomOf="@id/inLlText">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/inTvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:ellipsize="end"
+                android:maxLines="3"
+                style="@style/TextAppearance.Material3.BodyMedium"
+                android:text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam"
+                app:fontFamily="@font/roboto_bold"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/inIvImage"
+                app:layout_constraintTop_toBottomOf="@id/inTvSource" />
 
-        <TextView
-            android:id="@+id/inTvAuthor"
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/inCvBottomCardContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Author"
-            android:textColor="@color/greyFont"
-            android:textSize="15sp" />
+            android:layout_marginStart="18dp"
+            app:cardCornerRadius="8dp"
+            style="@style/Widget.Material3.CardView.Filled"
+            app:cardBackgroundColor="@color/md_theme_surfaceContainerHigh"
+            app:layout_constraintBottom_toBottomOf="@id/inIvImage"
+            app:layout_constraintStart_toEndOf="@id/inIvImage"
+            app:layout_constraintWidth_percent="0.50"
+            >
 
-        <TextView
-            android:id="@+id/inTvBulletPoint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="7dp"
-            android:layout_marginRight="7dp"
-            android:layout_toEndOf="@id/inTvAuthor"
-            android:gravity="center_vertical|center"
-            android:includeFontPadding="false"
-            android:text="•"
-            android:textColor="@color/greyFont"
-            android:textSize="20sp" />
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/inLlBottomCard"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="start|center_vertical"
+                android:layout_gravity="start|center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="8dp"
+                android:paddingTop="1dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="2dp">
 
-        <TextView
-            android:id="@+id/inTvPublishedDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date"
-            android:textColor="@color/greyFont"
-            android:textSize="14sp" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/inTvAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Paul Tassi fefefeffesfe feesfsf"
+                    app:fontFamily="@font/inter_18pt_medium"
+                    android:textColor="@color/greyFont"
+                    android:textSize="12sp" />
 
-    </LinearLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/inTvBulletPoint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_toEndOf="@id/inTvAuthor"
+                    android:gravity="center_vertical|center"
+                    android:includeFontPadding="false"
+                    android:text="•"
+                    app:fontFamily="@font/inter_18pt_medium"
+                    android:textColor="@color/greyFont"
+                    android:textSize="12sp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/inTvPublishedDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Yesterday"
+                    app:fontFamily="@font/inter_18pt_medium"
+                    android:textColor="@color/greyFont"
+                    android:textSize="12sp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

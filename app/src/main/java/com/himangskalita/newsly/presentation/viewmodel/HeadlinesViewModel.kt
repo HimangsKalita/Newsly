@@ -30,7 +30,7 @@ class HeadlinesViewModel @Inject constructor(
     val result: StateFlow<Resource<List<Article>>>
         get() = _result
     private val articleList = mutableListOf<Article>()
-    private var headlinePage = 1
+    private var headlinePage = 2
     fun incrementHeadlinePage() = headlinePage++
     private val _isPaginationFetching = MutableLiveData(false)
     val isPaginationFetching: LiveData<Boolean>

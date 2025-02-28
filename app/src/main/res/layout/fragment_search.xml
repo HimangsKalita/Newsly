@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".presentation.ui.fragments.SearchFragment">
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fgSrTvInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,6 @@
         android:paddingBottom="7dp"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,11 +21,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fgSrTvEmpty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableBottom="@drawable/baseline_search_24"
+        android:drawableBottom="@drawable/search_24px"
         android:padding="10dp"
         android:text="No news found, try searing using different keyword(s)"
         android:textAlignment="center"
@@ -39,11 +38,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.5" />
 
-    <TextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/fgSrTvError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableBottom="@drawable/baseline_warning_amber_24"
+        android:drawableTop="@drawable/error_outline_24px"
         android:padding="10dp"
         android:text="Error fetching news, please try again later"
         android:textAlignment="center"
@@ -57,50 +56,38 @@
         app:layout_constraintVertical_bias="0.5" />
 
     <androidx.core.widget.ContentLoadingProgressBar
-        android:id="@+id/fgSrPbSearchingNews"
+        android:id="@+id/fgSrProgressBarNews"
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="80dp"
         android:contentDescription="Searching news"
-        android:indeterminateTint="@color/blue"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/fgSrSvSearchNews"
+    <com.google.android.material.search.SearchBar
+        android:id="@+id/fgSrSvSearchBarNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="6dp"
-        android:background="@drawable/search_bar_border"
-        app:iconifiedByDefault="false"
+        style="@style/Widget.Material3.SearchBar"
+        android:hint="Search News..."
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.search.SearchView
+        android:id="@+id/fgSrSvSearchViewNews"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="Search News..."
+        style="@style/Widget.Material3.SearchView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="Search News..." />
-
-    <!--    <EditText-->
-    <!--        android:id="@+id/fgSrEtSearchNews"-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="14dp"-->
-    <!--        android:layout_marginStart="8dp"-->
-    <!--        android:layout_marginEnd="8dp"-->
-    <!--        android:visibility="gone"-->
-    <!--        android:background="@drawable/search_bar_border"-->
-    <!--        android:drawableStart="@drawable/baseline_search_24"-->
-    <!--        android:hint="Search News..."-->
-    <!--        android:padding="12dp"-->
-    <!--        android:textSize="16sp"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintHorizontal_bias="0.5"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/fsTvInfo" />-->
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/fgHlShimmerLayout"
@@ -113,7 +100,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fgSrSvSearchNews"
+        app:layout_constraintTop_toBottomOf="@id/fgSrSvSearchBarNews"
         app:layout_constraintVertical_bias="0.5">
 
         <LinearLayout
@@ -150,12 +137,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:padding="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         app:layout_constraintBottom_toTopOf="@id/fgSrPbPaginationSearchLoading"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fgSrSvSearchNews"
+        app:layout_constraintTop_toBottomOf="@id/fgSrSvSearchBarNews"
         app:layout_constraintVertical_bias="0.5" />
 
     <androidx.core.widget.ContentLoadingProgressBar
@@ -165,7 +153,6 @@
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
         android:contentDescription="Loading more search results below"
-        android:indeterminateTint="@color/blue"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
