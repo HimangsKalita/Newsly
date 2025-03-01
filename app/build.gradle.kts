@@ -133,7 +133,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     //Splash screen
-    implementation("androidx.core:core-splashscreen:1.0.1t")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }
 
 

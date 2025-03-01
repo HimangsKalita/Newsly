@@ -3,9 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    style="@style/ShapeAppearance.Material3.Corner.Medium"
-    android:theme="@style/ShapeAppearance.Material3.Corner.Medium">
+    android:padding="16dp">
 
     <RadioGroup
         android:id="@+id/tdRadioGroup"
@@ -16,20 +14,25 @@
             android:id="@+id/tdRbSystemDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="System Default"/>
+            android:paddingStart="20dp"
+            android:text="System Default"
+            android:textSize="16sp"/>
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/tdRbLightTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Light"/>
+            android:paddingStart="20dp"
+            android:text="Light"
+            android:textSize="16sp"/>
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/tdRbDarkTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dark"/>
-
+            android:paddingStart="20dp"
+            android:text="Dark"
+            android:textSize="16sp"/>
     </RadioGroup>
 
 </LinearLayout>
