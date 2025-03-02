@@ -57,7 +57,7 @@ class SearchAdapter(private val onSearchArticleClicked: (Article) -> Unit): List
         holder.binding.inTvPublishedDate.text = searchArticleItem.publishedAt?.formattedDate ?: "(Date)"
     }
 
-    private class DiffUtilComparison(): DiffUtil.ItemCallback<Article>() {
+    private class DiffUtilComparison: DiffUtil.ItemCallback<Article>() {
 
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
 

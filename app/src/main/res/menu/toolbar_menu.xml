@@ -5,8 +5,8 @@
     <item
         android:id="@+id/fgSettings"
         android:icon="@drawable/settings_outline_24px"
-        android:title="Settings"
-        android:contentDescription="Open settings menu"
+        android:title="@string/toolbar_menu_settings"
+        android:contentDescription="@string/toolbar_menu_settings_content_description"
         app:showAsAction="always" />
 
 </menu>

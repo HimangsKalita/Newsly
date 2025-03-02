@@ -4,7 +4,7 @@ import android.util.Log
 
 object Logger {
 
-    const val TAG = "NewslyTAG"
+    private const val TAG = "NewslyTAG"
 
     fun d(message: String) {
 

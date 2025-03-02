@@ -14,24 +14,30 @@
             android:id="@+id/tdRbSystemDefault"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/Widget.Material3.CompoundButton.RadioButton"
             android:paddingStart="20dp"
-            android:text="System Default"
+            android:paddingEnd="20dp"
+            android:text="@string/radio_btn_theme_system_default"
             android:textSize="16sp"/>
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/tdRbLightTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/Widget.Material3.CompoundButton.RadioButton"
             android:paddingStart="20dp"
-            android:text="Light"
+            android:paddingEnd="20dp"
+            android:text="@string/radio_btn_theme_light"
             android:textSize="16sp"/>
 
         <com.google.android.material.radiobutton.MaterialRadioButton
             android:id="@+id/tdRbDarkTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/Widget.Material3.CompoundButton.RadioButton"
             android:paddingStart="20dp"
-            android:text="Dark"
+            android:paddingEnd="20dp"
+            android:text="@string/radio_btn_theme_dark"
             android:textSize="16sp"/>
     </RadioGroup>
 

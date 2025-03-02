@@ -56,7 +56,7 @@ class ArticleViewModel @Inject constructor(
             content = article.content ?: "",
             description = article.description ?: "",
             publishedAt = article.publishedAt?.formattedDate ?: "(Date)",
-            source = article.source ?: Source("Souce ID", "Source"),
+            source = article.source ?: Source("Source ID", "Source"),
             title = article.title ?: "Article Title",
             url = article.url,
             urlToImage = article.urlToImage,

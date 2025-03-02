@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/fgHeadlines"
-        android:title="Home"
-        android:contentDescription="Home menu of news section"
+        android:title="@string/bottom_nav_home"
+        android:contentDescription="@string/bottom_nav_home_content_description"
         android:icon="@drawable/home_icon"/>
 
     <item
         android:id="@+id/fgSearch"
-        android:title="Search"
-        android:contentDescription="Search menu to search for news"
+        android:title="@string/bottom_nav_search"
+        android:contentDescription="@string/bottom_nav_search_content_description"
         android:icon="@drawable/search_24px"/>
 
     <item
         android:id="@+id/fgBookmarks"
-        android:title="Bookmarks"
-        android:contentDescription="Bookmarks menu for all the bookmark news list"
+        android:title="@string/bottom_nav_bookmarks"
+        android:contentDescription="@string/bottom_nav_bookmarks_content_description"
         android:icon="@drawable/bookmark_icon"/>
 </menu>

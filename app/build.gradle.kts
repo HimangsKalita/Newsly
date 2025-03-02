@@ -122,18 +122,22 @@ dependencies {
     //Leakcanary
 //    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
 
-    //swipt to refresh
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
+    //swipe to refresh
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-beta01")
 
     // Material 3
 //    implementation(libs.material3)
-    implementation("com.google.android.material:material:1.11.0")
+    //noinspection GradleDependency
+    implementation("com.google.android.material:material:1.12.0")
 
     //androidx preference
     implementation("androidx.preference:preference-ktx:1.2.1")
 
     //Splash screen
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    //Data store
+    implementation("androidx.datastore:datastore-preferences:1.1.3")
 }
 
 

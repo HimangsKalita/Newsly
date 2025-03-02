@@ -1,13 +1,10 @@
 package com.himangskalita.newsly.presentation.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.himangskalita.newsly.data.models.Article
 import com.himangskalita.newsly.data.repository.ApiNewsRepository
 import com.himangskalita.newsly.utils.ConnectivityObserver
-import com.himangskalita.newsly.utils.Logger
 import com.himangskalita.newsly.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
