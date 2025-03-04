@@ -2,7 +2,6 @@ package com.himangskalita.newsly.presentation.ui.fragments
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -18,27 +17,18 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.himangskalita.newsly.R
-import com.himangskalita.newsly.utils.Constants.Companion.APP_THEME_KEY
+import com.himangskalita.newsly.presentation.viewmodel.SettingsViewModel
 import com.himangskalita.newsly.utils.CubicBezierInterpolator
 import com.himangskalita.newsly.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import java.io.IOException
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.system.measureTimeMillis
@@ -46,26 +36,28 @@ import kotlin.system.measureTimeMillis
 @AndroidEntryPoint
 class SettingsFragment : PreferenceFragmentCompat() {
 
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var screenShotImageView: ImageView
 
     @Inject
     lateinit var preferenceDataStore: DataStore<Preferences>
+    private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
 
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+//        lifecycleScope.launch {
+//            updateThemeSummary()
+//        }
 
-        runBlocking {
 
-            updateThemeSummary()
+        lifecycleScope.launch {
+            settingsViewModel.themeSummary.collect { summary ->
+                findPreference<Preference>("app_theme")?.summary = summary
+            }
         }
 
-        val themePreference = findPreference<Preference>("app_theme")
-
-        themePreference?.let {
+        findPreference<Preference>("app_theme")?.let {
 
             it.setOnPreferenceClickListener {
 
@@ -78,31 +70,27 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private suspend fun showThemeDialog() {
+    private fun showThemeDialog() {
 
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.theme_dialog, null)
         val radioGroup = dialogView.findViewById<RadioGroup>(R.id.tdRadioGroup)
 
-//        val currentTheme = getSavedTheme()
-//
-//        when (currentTheme) {
-//
-//            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> radioGroup.check(R.id.tdRbSystemDefault)
-//            AppCompatDelegate.MODE_NIGHT_NO -> radioGroup.check(R.id.tdRbLightTheme)
-//            AppCompatDelegate.MODE_NIGHT_YES -> radioGroup.check(R.id.tdRbDarkTheme)
-//
-//        }
-
-
         val timeTaken = measureTimeMillis {
 
-            val currentTheme = getSavedTheme()
+//            val currentTheme = settingsViewModel.getAppTheme()
+//
+//            when (currentTheme) {
+//                AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> radioGroup.check(R.id.tdRbSystemDefault)
+//                AppCompatDelegate.MODE_NIGHT_NO -> radioGroup.check(R.id.tdRbLightTheme)
+//                AppCompatDelegate.MODE_NIGHT_YES -> radioGroup.check(R.id.tdRbDarkTheme)
+//            }
 
-            when (currentTheme) {
+            when (settingsViewModel.theme.value) {
                 AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> radioGroup.check(R.id.tdRbSystemDefault)
                 AppCompatDelegate.MODE_NIGHT_NO -> radioGroup.check(R.id.tdRbLightTheme)
                 AppCompatDelegate.MODE_NIGHT_YES -> radioGroup.check(R.id.tdRbDarkTheme)
             }
+
         }
 
         Logger.d("Getting theme for radiogroup took $timeTaken")
@@ -113,13 +101,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
             setPadding(48, 48, 48, 0) // Optional: Add padding
         }
 
-        val alertDialog = MaterialAlertDialogBuilder(requireContext())
+        val themeAlertDialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle("Select Theme")
             .setView(dialogView)
             .setCancelable(true)
             .setNegativeButton("Cancel", null)
-
-        val themeAlertDialog = alertDialog.create()
+            .create()
 
         themeAlertDialog.show()
 
@@ -139,20 +126,17 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             lifecycleScope.launch(Dispatchers.Main) {
 
-                    AppCompatDelegate.setDefaultNightMode(selectedTheme)
+                AppCompatDelegate.setDefaultNightMode(selectedTheme)
             }
 
             startCircularReveal()
 
-            lifecycleScope.launch {
+            settingsViewModel.saveTheme(selectedTheme)
 
-                saveTheme(selectedTheme)
-
-            }
-
-            lifecycleScope.launch {
-                updateThemeSummary()
-            }
+//            lifecycleScope.launch {
+//
+//                updateThemeSummary()
+//            }
 
             themeAlertDialog.dismiss()
         }
@@ -195,10 +179,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         screenShotImageView.viewTreeObserver.addOnGlobalLayoutListener(object :
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                // Remove the listener to avoid multiple calls
+
                 screenShotImageView.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
-                // Start the circular reveal animation
                 val rootView = requireActivity().window.decorView.rootView
 
                 rootView.viewTreeObserver.addOnGlobalLayoutListener(object :
@@ -252,63 +235,15 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     }
 
-    private suspend fun saveTheme(selectedTheme: Int) {
-
-//        sharedPreferences.edit().putInt("theme", selectedTheme).apply()
-
-        preferenceDataStore.edit { preferences ->
-            preferences[intPreferencesKey(APP_THEME_KEY)] = selectedTheme
-        }
-    }
-
-    private suspend fun getSavedTheme(): Int {
-
-//        return sharedPreferences.getInt("theme", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-
-        return withContext(Dispatchers.IO) {
-            preferenceDataStore.data
-                .catch { exception ->
-                    if (exception is IOException) {
-                        emit(emptyPreferences())
-                    } else {
-                        throw exception
-                    }
-                }
-                .map { preferences ->
-                    preferences[intPreferencesKey(APP_THEME_KEY)]
-                }.first() ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-        }
-    }
-
     private suspend fun updateThemeSummary() {
-
-        val themePreference = findPreference<Preference>("app_theme")
-
-//        val currentTheme = getSavedTheme()
-//
-//        val summary = when (currentTheme) {
-//            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> "System default"
-//            AppCompatDelegate.MODE_NIGHT_NO -> "Light"
-//            AppCompatDelegate.MODE_NIGHT_YES -> "Dark"
-//            else -> "System default"
-//        }
-//
-//        themePreference?.summary = summary
 
         val timeTaken = measureTimeMillis {
 
-            val currentTheme = getSavedTheme()
-
-            val summary = when (currentTheme) {
-                AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM -> "System default"
-                AppCompatDelegate.MODE_NIGHT_NO -> "Light"
-                AppCompatDelegate.MODE_NIGHT_YES -> "Dark"
-                else -> "System default"
-            }
-
+            val themePreference = findPreference<Preference>("app_theme")
+            val summary = settingsViewModel.getThemeSummary()
             themePreference?.summary = summary
         }
 
-        Logger.d("Seting theme summary took $timeTaken")
+        Logger.d("Update theme summary took $timeTaken")
     }
 }

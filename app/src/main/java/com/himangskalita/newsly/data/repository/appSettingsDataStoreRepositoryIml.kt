@@ -24,12 +24,12 @@ val Context.userPreferenceDataStore: DataStore<Preferences> by preferencesDataSt
 private val APP_THEME = intPreferencesKey(APP_THEME_KEY)
 
 @Singleton
-class DataStoreRepositoryIml @Inject constructor(private val preferencesDataStore: DataStore<Preferences>) :
-    DataStoreRepository {
+class appSettingsDataStoreRepositoryIml @Inject constructor(private val context: Context) :
+    appSettingsDataStoreRepository {
 
     override suspend fun saveAppThemeToPreferenceDataStore(theme: Int) {
 
-        preferencesDataStore.edit { preferences ->
+        context.userPreferenceDataStore.edit { preferences ->
 
             preferences[APP_THEME] = theme
         }
@@ -37,18 +37,20 @@ class DataStoreRepositoryIml @Inject constructor(private val preferencesDataStor
 
     override fun getAppThemeFromPreferenceDataStore(): Flow<Int> {
 
-        return preferencesDataStore.data
+        return context.userPreferenceDataStore.data
             .map { preferences ->
+
                 preferences[APP_THEME] ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
             }
             .catch { exception ->
                 if (exception is IOException) {
 
-                    emit(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                     Logger.d("IO Exception ${exception.message}")
+                    emit(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                 } else {
                     throw exception
                 }
             }
+
     }
 }

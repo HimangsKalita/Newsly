@@ -3,8 +3,8 @@ package com.himangskalita.newsly.di.modules
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import com.himangskalita.newsly.data.repository.DataStoreRepository
-import com.himangskalita.newsly.data.repository.DataStoreRepositoryIml
+import com.himangskalita.newsly.data.repository.appSettingsDataStoreRepository
+import com.himangskalita.newsly.data.repository.appSettingsDataStoreRepositoryIml
 import com.himangskalita.newsly.data.repository.userPreferenceDataStore
 import dagger.Module
 import dagger.Provides
@@ -25,9 +25,9 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideDataStoreRepository(preferencesDataStore: DataStore<Preferences>): DataStoreRepository {
+    fun provideDataStoreRepository(@ApplicationContext context: Context): appSettingsDataStoreRepository {
 
-        return DataStoreRepositoryIml(preferencesDataStore)
+        return appSettingsDataStoreRepositoryIml(context)
     }
 
 //    @Module

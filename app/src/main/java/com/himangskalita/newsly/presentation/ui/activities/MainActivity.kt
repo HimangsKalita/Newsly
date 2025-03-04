@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
@@ -16,6 +17,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
@@ -27,6 +29,7 @@ import com.himangskalita.newsly.databinding.ActivityMainBinding
 import com.himangskalita.newsly.presentation.ui.fragments.BookmarkFragment
 import com.himangskalita.newsly.presentation.ui.fragments.HeadlinesFragment
 import com.himangskalita.newsly.presentation.ui.fragments.SearchFragment
+import com.himangskalita.newsly.presentation.viewmodel.SettingsViewModel
 import com.himangskalita.newsly.utils.Constants.Companion.APP_THEME_KEY
 import com.himangskalita.newsly.utils.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import javax.inject.Inject
@@ -50,32 +53,42 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navOptions: NavOptions
     private var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
 
-    @Inject
-    lateinit var preferenceDataStore: DataStore<Preferences>
+//    @Inject
+//    lateinit var preferenceDataStore: DataStore<Preferences>
+
+//    private val settingsViewModel: SettingsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
 
-        val appTheme = runBlocking {
-            preferenceDataStore.data
-                .catch { exception ->
-                    if (exception is IOException) {
-                        emit(emptyPreferences())
-                    } else {
-                        throw exception
-                    }
-                }
-                .map { preferences ->
-                    preferences[intPreferencesKey(APP_THEME_KEY)]
-                        ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-                }
-                .first()
-        }
+//        lifecycleScope.launch {
+//            settingsViewModel.theme.collect { theme ->
+//                AppCompatDelegate.setDefaultNightMode(theme)
+//            }
+//        }
 
-        if (AppCompatDelegate.getDefaultNightMode() != appTheme) {
-            AppCompatDelegate.setDefaultNightMode(appTheme)
-        }
+//        lifecycleScope.launch {
+//            val appTheme = preferenceDataStore.data
+//                .catch { exception ->
+//                    if (exception is IOException) {
+//                        emit(emptyPreferences())
+//                    } else {
+//                        throw exception
+//                    }
+//                }
+//                .map { preferences ->
+//                    preferences[intPreferencesKey(APP_THEME_KEY)]
+//                        ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+//                }
+//                .first()
+//
+//
+//            if (AppCompatDelegate.getDefaultNightMode() != appTheme) {
+//                AppCompatDelegate.setDefaultNightMode(appTheme)
+//            }
+//        }
+
 
 //        lifecycleScope.launch(Dispatchers.IO) {
 //
@@ -103,41 +116,6 @@ class MainActivity : AppCompatActivity() {
         setupToolbar()
         setupBottomNavigation()
         setupKeyboardVisiblitiyListener()
-    }
-
-    private suspend fun setupAppTheme() {
-
-//        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-//
-//        val savedAppTheme = sharedPreferences.getInt("theme", AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-//        AppCompatDelegate.setDefaultNightMode(savedAppTheme)
-
-        val timeTaken = measureTime {
-            val savedAppTheme = withContext(Dispatchers.IO) {
-                preferenceDataStore.data
-                    .catch { exception ->
-                        if (exception is IOException) {
-                            emit(emptyPreferences())
-                        } else {
-                            throw exception
-                        }
-                    }
-                    .map { preferences ->
-                        preferences[intPreferencesKey(APP_THEME_KEY)]
-                            ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-                    }
-                    .first()
-            }
-
-            if (AppCompatDelegate.getDefaultNightMode() != savedAppTheme) {
-                withContext(Dispatchers.Main) {
-                    AppCompatDelegate.setDefaultNightMode(savedAppTheme)
-                }
-            }
-
-        }
-
-        Logger.d("Time taken to load theme $timeTaken")
     }
 
     private fun setupJetpackNavigation() {
